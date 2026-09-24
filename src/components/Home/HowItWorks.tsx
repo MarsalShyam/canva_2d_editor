@@ -27,8 +27,9 @@ export function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 sm:py-28 bg-white px-4 sm:px-6 lg:px-8 border-t border-slate-100">
-      <div className="max-w-7xl mx-auto">
+    <section id="how-it-works" className="py-20 sm:py-28 bg-white px-4 sm:px-6 lg:px-8 border-t border-slate-100 w-full flex flex-col items-center">
+      <div className="max-w-7xl mx-auto w-full">
+
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3.5 py-1.5 rounded-full border border-indigo-100">

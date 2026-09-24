@@ -2,22 +2,21 @@ import { motion } from 'framer-motion';
 import {
   Pencil,
   Square,
-  Circle,
-  Triangle,
   Type,
   Palette,
   MousePointerClick,
   Cloud,
   RotateCcw,
   Sparkles,
-  ArrowRight,
   Layers,
 } from 'lucide-react';
 
+
 export function FeaturesSection() {
   return (
-    <section id="features-section" className="py-20 sm:py-28 bg-[#f8fafc] px-4 sm:px-6 lg:px-8 relative">
-      <div className="max-w-7xl mx-auto">
+    <section id="features-section" className="py-20 sm:py-28 bg-[#f8fafc] px-4 sm:px-6 lg:px-8 relative w-full flex flex-col items-center">
+      <div className="max-w-7xl mx-auto w-full">
+
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-20">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-4">

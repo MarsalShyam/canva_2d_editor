@@ -6,8 +6,9 @@ interface FooterProps {
 
 export function Footer({ onCreateCanvas }: FooterProps) {
   return (
-    <footer className="bg-slate-950 text-slate-400 text-xs border-t border-slate-800/80 pt-16 pb-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-7xl mx-auto">
+    <footer className="bg-slate-950 text-slate-400 text-xs border-t border-slate-800/80 pt-16 pb-12 px-4 sm:px-6 lg:px-8 font-sans w-full flex flex-col items-center">
+      <div className="max-w-7xl mx-auto w-full">
+
         {/* Main Columns */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12 pb-14 border-b border-slate-800/70">
           {/* Column 1: Brand */}

@@ -56,8 +56,9 @@ export function ToolsSection() {
   ];
 
   return (
-    <section className="py-20 sm:py-24 bg-slate-50/60 px-4 sm:px-6 lg:px-8 border-t border-slate-200/70">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-20 sm:py-24 bg-slate-50/60 px-4 sm:px-6 lg:px-8 border-t border-slate-200/70 w-full flex flex-col items-center">
+      <div className="max-w-7xl mx-auto w-full">
+
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm">
             Core Toolkit
