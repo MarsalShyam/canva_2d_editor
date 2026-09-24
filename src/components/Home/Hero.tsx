@@ -14,13 +14,16 @@ export function Hero({ onCreateCanvas, isCreating }: HeroProps) {
   };
 
   return (
-    <section className="relative pt-10 pb-16 sm:pt-16 sm:pb-24 overflow-hidden bg-gradient-to-b from-slate-50/80 via-white to-slate-50/50">
+    <section className="relative pt-7 pb-10 sm:pt-10 sm:pb-10 overflow-hidden">
+      {/* Grid Pattern Background */}
+      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]" />
+
       {/* Subtle radial ambient background glows */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-blue-400/10 via-indigo-400/10 to-purple-400/10 rounded-full blur-[140px] pointer-events-none -z-10" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+      <div className="w-full px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
         {/* Eyebrow Pill */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -28,14 +31,14 @@ export function Hero({ onCreateCanvas, isCreating }: HeroProps) {
         >
           <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
           <span>The Simple 2D Creative Workspace</span>
-        </motion.div>
+        </motion.div> */}
 
         {/* Main Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl sm:text-6xl md:text-7xl lg:text-[76px] font-extrabold text-slate-900 tracking-tight leading-[1.08] max-w-4xl"
+          className="text-4xl sm:text-6xl md:text-7xl lg:text-[76px] font-extrabold text-slate-900 tracking-tight leading-[1.08] max-w-5xl"
         >
           Turn ideas into <br />
           <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">
@@ -58,13 +61,13 @@ export function Hero({ onCreateCanvas, isCreating }: HeroProps) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto"
+          className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto"
         >
           <button
             id="hero-create-btn"
             onClick={onCreateCanvas}
             disabled={isCreating}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 active:scale-[0.98] text-white font-semibold text-base shadow-xl shadow-indigo-600/30 hover:shadow-2xl hover:shadow-indigo-600/40 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 active:scale-[0.98] text-white font-semibold text-base shadow-xl shadow-indigo-600/30 hover:shadow-2xl hover:shadow-indigo-600/40 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isCreating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
             <span>{isCreating ? 'Opening Editor...' : 'Create a design'}</span>
@@ -72,7 +75,7 @@ export function Hero({ onCreateCanvas, isCreating }: HeroProps) {
 
           <button
             onClick={scrollToFeatures}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.98] text-slate-700 font-semibold text-base border border-slate-200/90 shadow-sm hover:border-slate-300 transition-all duration-200"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.98] text-slate-700 font-semibold text-base border border-slate-200/90 shadow-sm hover:border-slate-300 transition-all duration-200"
           >
             <span>Explore features</span>
             <ArrowDown className="w-4 h-4 text-slate-400" />

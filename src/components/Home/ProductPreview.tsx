@@ -22,7 +22,7 @@ export function ProductPreview() {
       initial={{ opacity: 0, y: 35 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.35 }}
-      className="relative w-full max-w-6xl mx-auto mt-12 sm:mt-16 px-2 sm:px-4"
+      className="relative w-full max-w-6xl mx-auto mt-9 sm:mt-10 px-2 sm:px-4"
     >
       {/* Glow aura background */}
       <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-purple-500/15 rounded-3xl blur-2xl -z-10 pointer-events-none" />

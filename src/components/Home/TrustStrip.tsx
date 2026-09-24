@@ -11,8 +11,9 @@ export function TrustStrip() {
   ];
 
   return (
-    <div className="w-full bg-white border-y border-slate-200/80 py-8 px-4 sm:px-6">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+    <div className="w-full bg-white border-y border-slate-200/80 py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto flex flex-col md:f
+      lex-row items-center justify-between gap-5 text-center md:text-left">
         <div>
           <h2 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
             Everything you need to turn an idea into a visual.
@@ -23,7 +24,7 @@ export function TrustStrip() {
         </div>
 
         {/* Feature Check Chips */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
           {items.map((item) => (
             <div
               key={item}

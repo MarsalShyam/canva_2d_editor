@@ -3,7 +3,7 @@ import { Cloud, Check, Link, Globe } from 'lucide-react';
 
 export function CloudSaveSection() {
   return (
-    <section id="cloud-save" className="py-20 sm:py-28 bg-white px-4 sm:px-6 lg:px-8 border-t border-slate-100 w-full flex flex-col items-center">
+    <section id="cloud-save" className="py-10 sm:py-15 bg-white px-4 sm:px-6 lg:px-8 border-t border-slate-100 w-full flex flex-col items-center">
       <div className="max-w-7xl mx-auto w-full">
 
         <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-10">

@@ -68,11 +68,10 @@ export function Navbar({ onCreateCanvas, isCreating }: NavbarProps) {
   return (
     <header
       ref={navRef}
-      className={`sticky top-0 z-50 w-full transition-all duration-200 ${
-        isScrolled
-          ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200/80'
-          : 'bg-white/80 backdrop-blur-sm border-b border-slate-100'
-      }`}
+      className={`sticky top-0 z-50 w-full transition-all duration-200 ${isScrolled
+        ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200/80'
+        : 'bg-white/80 backdrop-blur-sm border-b border-slate-100'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         {/* Left: Brand Logo */}
@@ -95,17 +94,15 @@ export function Navbar({ onCreateCanvas, isCreating }: NavbarProps) {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown('design')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeDropdown === 'design'
-                    ? 'text-indigo-600 bg-indigo-50/70'
-                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/70'
-                }`}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${activeDropdown === 'design'
+                  ? 'text-indigo-600 bg-indigo-50/70'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/70'
+                  }`}
               >
                 <span>Design</span>
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    activeDropdown === 'design' ? 'rotate-180 text-indigo-600' : 'text-slate-400'
-                  }`}
+                  className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'design' ? 'rotate-180 text-indigo-600' : 'text-slate-400'
+                    }`}
                 />
               </button>
 
@@ -167,17 +164,15 @@ export function Navbar({ onCreateCanvas, isCreating }: NavbarProps) {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown('features')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeDropdown === 'features'
-                    ? 'text-indigo-600 bg-indigo-50/70'
-                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/70'
-                }`}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${activeDropdown === 'features'
+                  ? 'text-indigo-600 bg-indigo-50/70'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/70'
+                  }`}
               >
                 <span>Features</span>
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    activeDropdown === 'features' ? 'rotate-180 text-indigo-600' : 'text-slate-400'
-                  }`}
+                  className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'features' ? 'rotate-180 text-indigo-600' : 'text-slate-400'
+                    }`}
                 />
               </button>
 
@@ -225,17 +220,15 @@ export function Navbar({ onCreateCanvas, isCreating }: NavbarProps) {
             <div className="relative">
               <button
                 onClick={() => toggleDropdown('resources')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeDropdown === 'resources'
-                    ? 'text-indigo-600 bg-indigo-50/70'
-                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/70'
-                }`}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${activeDropdown === 'resources'
+                  ? 'text-indigo-600 bg-indigo-50/70'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/70'
+                  }`}
               >
                 <span>Resources</span>
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    activeDropdown === 'resources' ? 'rotate-180 text-indigo-600' : 'text-slate-400'
-                  }`}
+                  className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'resources' ? 'rotate-180 text-indigo-600' : 'text-slate-400'
+                    }`}
                 />
               </button>
 
@@ -277,27 +270,11 @@ export function Navbar({ onCreateCanvas, isCreating }: NavbarProps) {
               </AnimatePresence>
             </div>
 
-            {/* Pricing / Free Badge */}
-            <button
-              onClick={() => {
-                const el = document.getElementById('features-section');
-                el?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100/70 transition-colors"
-            >
-              Pricing
-            </button>
           </nav>
         </div>
 
         {/* Right: Actions */}
         <div className="hidden sm:flex items-center gap-3">
-          <button
-            onClick={onCreateCanvas}
-            className="text-sm font-medium text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg transition-colors"
-          >
-            Log in
-          </button>
 
           <button
             onClick={onCreateCanvas}

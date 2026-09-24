@@ -8,7 +8,7 @@ interface CTASectionProps {
 
 export function CTASection({ onCreateCanvas, isCreating }: CTASectionProps) {
   return (
-    <section className="py-20 sm:py-28 bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 text-white relative overflow-hidden px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
+    <section className="py-10 sm:py-15 bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 text-white relative overflow-hidden px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
       {/* Background Decorative Rings */}
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-violet-600/20 rounded-full blur-[140px] pointer-events-none" />
