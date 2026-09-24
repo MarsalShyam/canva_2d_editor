@@ -80,9 +80,7 @@ export function Navbar({ onCreateCanvas, isCreating }: NavbarProps) {
             href="/"
             className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-xl"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
-              <Paintbrush className="w-5 h-5" />
-            </div>
+            <img src="/logo.png" width={52} height={52} alt="Logo" />
             <span className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-sans">
               Chull<span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Draw</span>
             </span>
