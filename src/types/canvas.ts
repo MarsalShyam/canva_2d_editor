@@ -6,13 +6,20 @@ export type ToolType =
   | 'select'
   | 'pen'
   | 'eraser'
+  | 'fill'
   | 'text'
   | 'rectangle'
   | 'circle'
   | 'triangle'
   | 'line'
   | 'star'
+  | 'cloud'
+  | 'heart'
   | 'arrow'
+  | 'arrow-right'
+  | 'arrow-left'
+  | 'arrow-up'
+  | 'arrow-down'
   | 'diamond';
 
 /** Object properties editable in the properties panel */

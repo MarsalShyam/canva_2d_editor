@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ActiveSelection } from 'fabric';
+import { ActiveSelection, FabricImage } from 'fabric';
 import type { Canvas as FabricCanvas, FabricObject } from 'fabric';
 import { Loader2, AlertCircle, Home } from 'lucide-react';
 
@@ -150,10 +150,44 @@ export function CanvasEditor() {
   // Selection change
   const handleSelectionChange = useCallback((obj: FabricObject | null) => {
     setSelectedObject(obj);
-    if (obj) {
-      setActiveTool('select');
-    }
   }, []);
+
+  // Handle local image upload / import
+  const handleAddImage = useCallback(
+    (file: File) => {
+      if (!canvas) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        if (!dataUrl) return;
+
+        const imgElement = new Image();
+        imgElement.onload = () => {
+          const fabricImg = new FabricImage(imgElement, {
+            left: 80,
+            top: 80,
+          });
+
+          const maxW = CANVAS_WIDTH * 0.7;
+          const maxH = CANVAS_HEIGHT * 0.7;
+          if (fabricImg.width > maxW || fabricImg.height > maxH) {
+            const scale = Math.min(maxW / fabricImg.width, maxH / fabricImg.height);
+            fabricImg.scale(scale);
+          }
+
+          canvas.add(fabricImg);
+          canvas.setActiveObject(fabricImg);
+          setActiveTool('select');
+          canvas.renderAll();
+          handleObjectModified();
+          showToast('success', 'Image inserted on canvas');
+        };
+        imgElement.src = dataUrl;
+      };
+      reader.readAsDataURL(file);
+    },
+    [canvas, handleObjectModified]
+  );
 
   // Color selection for active color slot
   const handleColorChange = useCallback(
@@ -398,6 +432,7 @@ export function CanvasEditor() {
         onExport={handleExport}
         showGrid={showGrid}
         onToggleGrid={() => setShowGrid(!showGrid)}
+        onAddImage={handleAddImage}
       />
 
       {/* 2. Contextual Property Bar (Appears when an object is selected) */}
@@ -424,6 +459,7 @@ export function CanvasEditor() {
           onObjectModified={handleObjectModified}
           onZoomChange={setZoom}
           onMouseMoveCoords={setCursorCoords}
+          onAddImage={handleAddImage}
         />
 
         {/* Loading Overlay */}

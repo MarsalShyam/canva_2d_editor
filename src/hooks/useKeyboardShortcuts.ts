@@ -141,6 +141,10 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
         case 'p':
           setActiveTool('pen');
           break;
+        case 'f':
+        case 'g':
+          setActiveTool('fill');
+          break;
         case 'e':
           setActiveTool('eraser');
           break;
@@ -155,6 +159,12 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
           break;
         case 'l':
           setActiveTool('line');
+          break;
+        case 's':
+          setActiveTool('star');
+          break;
+        case 'h':
+          setActiveTool('heart');
           break;
       }
     }

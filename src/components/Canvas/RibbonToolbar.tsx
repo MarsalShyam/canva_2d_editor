@@ -8,12 +8,19 @@ import {
   Pencil,
   Type,
   Eraser,
+  PaintBucket,
+  ImagePlus,
   Square,
   Circle,
   Triangle,
   Minus,
   Star,
+  Heart,
+  Cloud,
   ArrowRight,
+  ArrowLeft,
+  ArrowUp,
+  ArrowDown,
   Diamond,
   Trash2,
   Download,
@@ -63,6 +70,7 @@ interface RibbonToolbarProps {
   onExport: (format: ExportFormat) => void;
   showGrid: boolean;
   onToggleGrid: () => void;
+  onAddImage: (file: File) => void;
 }
 
 export function RibbonToolbar({
@@ -92,12 +100,21 @@ export function RibbonToolbar({
   onExport,
   showGrid,
   onToggleGrid,
+  onAddImage,
 }: RibbonToolbarProps) {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState<'file' | 'edit' | 'view' | 'export' | null>(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const customColorInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      onAddImage(file);
+      e.target.value = '';
+    }
+  };
 
   // Close menus on click outside
   useEffect(() => {
@@ -112,8 +129,13 @@ export function RibbonToolbar({
     { type: 'circle', icon: Circle, label: 'Circle (C)' },
     { type: 'triangle', icon: Triangle, label: 'Triangle' },
     { type: 'star', icon: Star, label: 'Star' },
-    { type: 'arrow', icon: ArrowRight, label: 'Arrow' },
+    { type: 'heart', icon: Heart, label: 'Heart' },
+    { type: 'cloud', icon: Cloud, label: 'Cloud' },
     { type: 'diamond', icon: Diamond, label: 'Diamond' },
+    { type: 'arrow-right', icon: ArrowRight, label: 'Arrow Right' },
+    { type: 'arrow-left', icon: ArrowLeft, label: 'Arrow Left' },
+    { type: 'arrow-up', icon: ArrowUp, label: 'Arrow Up' },
+    { type: 'arrow-down', icon: ArrowDown, label: 'Arrow Down' },
   ];
 
   return (
@@ -450,15 +472,22 @@ export function RibbonToolbar({
           <span className="text-[10px] text-gray-400 font-medium tracking-wide">Selection</span>
         </div>
 
-        {/* Section B: Tools (Pencil, Text, Eraser) */}
+        {/* Section B: Tools (Pencil, Fill Bucket, Text, Eraser, Add Image) */}
         <div className="flex flex-col items-center border-r border-[#333333] pr-3 shrink-0">
-          <div className="grid grid-cols-3 gap-1 mb-1.5">
+          <input
+            type="file"
+            ref={imageInputRef}
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageFileChange}
+          />
+          <div className="grid grid-cols-5 gap-1 mb-1.5">
             {/* Pencil / Freehand Pen */}
             <button
               onClick={() => onToolChange('pen')}
               className={`w-8 h-8 rounded-md flex items-center justify-center border transition-all ${
                 activeTool === 'pen'
-                  ? 'bg-blue-600/30 border-blue-500 text-white'
+                  ? 'bg-blue-600/30 border-blue-500 text-white shadow-sm'
                   : 'bg-[#292929] border-[#383838] text-gray-300 hover:bg-[#333333] hover:text-white'
               }`}
               title="Pencil / Freehand Drawing (P)"
@@ -466,12 +495,25 @@ export function RibbonToolbar({
               <Pencil className="w-4 h-4" />
             </button>
 
+            {/* Fill Tool (Paint Bucket) */}
+            <button
+              onClick={() => onToolChange('fill')}
+              className={`w-8 h-8 rounded-md flex items-center justify-center border transition-all ${
+                activeTool === 'fill'
+                  ? 'bg-blue-600/30 border-blue-500 text-white shadow-sm'
+                  : 'bg-[#292929] border-[#383838] text-gray-300 hover:bg-[#333333] hover:text-white'
+              }`}
+              title="Fill Enclosed Area / Paint Bucket (F)"
+            >
+              <PaintBucket className="w-4 h-4" />
+            </button>
+
             {/* Text Tool */}
             <button
               onClick={() => onToolChange('text')}
               className={`w-8 h-8 rounded-md flex items-center justify-center border transition-all ${
                 activeTool === 'text'
-                  ? 'bg-blue-600/30 border-blue-500 text-white'
+                  ? 'bg-blue-600/30 border-blue-500 text-white shadow-sm'
                   : 'bg-[#292929] border-[#383838] text-gray-300 hover:bg-[#333333] hover:text-white'
               }`}
               title="Text (A / T)"
@@ -484,20 +526,29 @@ export function RibbonToolbar({
               onClick={() => onToolChange('eraser')}
               className={`w-8 h-8 rounded-md flex items-center justify-center border transition-all ${
                 activeTool === 'eraser'
-                  ? 'bg-blue-600/30 border-blue-500 text-white'
+                  ? 'bg-blue-600/30 border-blue-500 text-white shadow-sm'
                   : 'bg-[#292929] border-[#383838] text-gray-300 hover:bg-[#333333] hover:text-white'
               }`}
               title="Eraser (E)"
             >
               <Eraser className="w-4 h-4" />
             </button>
+
+            {/* Insert Image Button */}
+            <button
+              onClick={() => imageInputRef.current?.click()}
+              className="w-8 h-8 rounded-md flex items-center justify-center border border-[#383838] bg-[#292929] text-gray-300 hover:bg-indigo-600/30 hover:border-indigo-500 hover:text-white transition-all"
+              title="Insert Image from Computer"
+            >
+              <ImagePlus className="w-4 h-4" />
+            </button>
           </div>
           <span className="text-[10px] text-gray-400 font-medium tracking-wide">Tools</span>
         </div>
 
-        {/* Section C: Shapes Grid (Line, Rect, Circle, Triangle, Star, Arrow, Diamond) */}
+        {/* Section C: Shapes Grid (12 Shapes) */}
         <div className="flex flex-col items-center border-r border-[#333333] pr-3 shrink-0">
-          <div className="grid grid-cols-4 gap-1 p-1 bg-[#1a1a1a] rounded-lg border border-[#333333] mb-1.5">
+          <div className="grid grid-cols-6 gap-1 p-1 bg-[#1a1a1a] rounded-lg border border-[#333333] mb-1.5">
             {shapeTools.map((shape) => {
               const Icon = shape.icon;
               const isSelected = activeTool === shape.type;
@@ -507,7 +558,7 @@ export function RibbonToolbar({
                   onClick={() => onToolChange(shape.type)}
                   className={`w-7 h-7 rounded flex items-center justify-center transition-all ${
                     isSelected
-                      ? 'bg-blue-600 text-white shadow-sm'
+                      ? 'bg-blue-600 text-white shadow-md ring-1 ring-blue-400'
                       : 'text-gray-300 hover:bg-[#2e2e2e] hover:text-white'
                   }`}
                   title={shape.label}

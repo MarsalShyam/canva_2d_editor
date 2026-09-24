@@ -1,4 +1,4 @@
-import { Paintbrush, Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';
 
 interface FooterProps {
   onCreateCanvas: () => void;

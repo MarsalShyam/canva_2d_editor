@@ -19,6 +19,7 @@ import {
   MAX_ZOOM,
   ZOOM_STEP,
 } from '../../utils/constants';
+import { performFloodFill } from '../../utils/floodFill';
 
 interface CanvasAreaProps {
   activeTool: ToolType;
@@ -33,6 +34,7 @@ interface CanvasAreaProps {
   onObjectModified: () => void;
   onZoomChange: (zoom: number) => void;
   onMouseMoveCoords: (coords: { x: number; y: number } | null) => void;
+  onAddImage?: (file: File) => void;
 }
 
 export function CanvasArea({
@@ -48,6 +50,7 @@ export function CanvasArea({
   onObjectModified,
   onZoomChange,
   onMouseMoveCoords,
+  onAddImage,
 }: CanvasAreaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<FabricCanvas | null>(null);
@@ -74,7 +77,20 @@ export function CanvasArea({
     fillEnabled,
   };
 
-  // Helper to construct custom shapes (Star, Arrow, Diamond)
+  // Helper to construct custom shapes (Star, Cloud, Heart, Arrows, Diamond)
+  const isCustomShape = (tool: string) =>
+    [
+      'star',
+      'cloud',
+      'heart',
+      'arrow',
+      'arrow-right',
+      'arrow-left',
+      'arrow-up',
+      'arrow-down',
+      'diamond',
+    ].includes(tool);
+
   const createCustomShape = (
     type: string,
     x: number,
@@ -106,15 +122,124 @@ export function CanvasArea({
       });
     }
 
-    if (type === 'arrow') {
+    if (type === 'heart') {
+      const heartPoints: { x: number; y: number }[] = [];
+      const steps = 36;
+      for (let i = 0; i < steps; i++) {
+        const t = (i / steps) * Math.PI * 2;
+        const hx = 16 * Math.pow(Math.sin(t), 3);
+        const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+        const nx = (hx + 16) / 32;
+        const ny = (hy + 17) / 32;
+        heartPoints.push({ x: nx * absW, y: ny * absH });
+      }
+      return new Polygon(heartPoints, {
+        left,
+        top,
+        fill,
+        stroke,
+        strokeWidth: sWidth,
+      });
+    }
+
+    if (type === 'cloud') {
+      const cloudNorm = [
+        { x: 0.18, y: 0.8 },
+        { x: 0.1, y: 0.72 },
+        { x: 0.05, y: 0.58 },
+        { x: 0.07, y: 0.44 },
+        { x: 0.16, y: 0.34 },
+        { x: 0.22, y: 0.22 },
+        { x: 0.34, y: 0.14 },
+        { x: 0.48, y: 0.12 },
+        { x: 0.58, y: 0.17 },
+        { x: 0.65, y: 0.1 },
+        { x: 0.78, y: 0.12 },
+        { x: 0.88, y: 0.22 },
+        { x: 0.94, y: 0.36 },
+        { x: 0.96, y: 0.5 },
+        { x: 0.92, y: 0.65 },
+        { x: 0.85, y: 0.78 },
+        { x: 0.8, y: 0.8 },
+      ];
+      return new Polygon(
+        cloudNorm.map((p) => ({ x: p.x * absW, y: p.y * absH })),
+        {
+          left,
+          top,
+          fill,
+          stroke,
+          strokeWidth: sWidth,
+        }
+      );
+    }
+
+    if (type === 'arrow' || type === 'arrow-right') {
       const points = [
-        { x: 0, y: absH * 0.3 },
-        { x: absW * 0.6, y: absH * 0.3 },
-        { x: absW * 0.6, y: 0 },
+        { x: 0, y: absH * 0.35 },
+        { x: absW * 0.6, y: absH * 0.35 },
+        { x: absW * 0.6, y: absH * 0.1 },
         { x: absW, y: absH * 0.5 },
-        { x: absW * 0.6, y: absH },
-        { x: absW * 0.6, y: absH * 0.7 },
-        { x: 0, y: absH * 0.7 },
+        { x: absW * 0.6, y: absH * 0.9 },
+        { x: absW * 0.6, y: absH * 0.65 },
+        { x: 0, y: absH * 0.65 },
+      ];
+      return new Polygon(points, {
+        left,
+        top,
+        fill,
+        stroke,
+        strokeWidth: sWidth,
+      });
+    }
+
+    if (type === 'arrow-left') {
+      const points = [
+        { x: absW * 0.4, y: absH * 0.1 },
+        { x: absW * 0.4, y: absH * 0.35 },
+        { x: absW, y: absH * 0.35 },
+        { x: absW, y: absH * 0.65 },
+        { x: absW * 0.4, y: absH * 0.65 },
+        { x: absW * 0.4, y: absH * 0.9 },
+        { x: 0, y: absH * 0.5 },
+      ];
+      return new Polygon(points, {
+        left,
+        top,
+        fill,
+        stroke,
+        strokeWidth: sWidth,
+      });
+    }
+
+    if (type === 'arrow-up') {
+      const points = [
+        { x: absW * 0.5, y: 0 },
+        { x: absW * 0.9, y: absH * 0.4 },
+        { x: absW * 0.65, y: absH * 0.4 },
+        { x: absW * 0.65, y: absH },
+        { x: absW * 0.35, y: absH },
+        { x: absW * 0.35, y: absH * 0.4 },
+        { x: absW * 0.1, y: absH * 0.4 },
+      ];
+      return new Polygon(points, {
+        left,
+        top,
+        fill,
+        stroke,
+        strokeWidth: sWidth,
+      });
+    }
+
+    if (type === 'arrow-down') {
+      const points = [
+        { x: absW * 0.35, y: 0 },
+        { x: absW * 0.65, y: 0 },
+        { x: absW * 0.65, y: absH * 0.6 },
+        { x: absW * 0.9, y: absH * 0.6 },
+        { x: absW * 0.5, y: absH },
+        { x: absW * 0.1, y: absH * 0.6 },
+        { x: absW * 0.35, y: absH * 0.6 },
       ];
       return new Polygon(points, {
         left,
@@ -126,19 +251,18 @@ export function CanvasArea({
     }
 
     if (type === 'star') {
-      const points = [
-        { x: absW * 0.5, y: 0 },
-        { x: absW * 0.62, y: absH * 0.35 },
-        { x: absW, y: absH * 0.35 },
-        { x: absW * 0.69, y: absH * 0.57 },
-        { x: absW * 0.81, y: absH },
-        { x: absW * 0.5, y: absH * 0.75 },
-        { x: absW * 0.19, y: absH },
-        { x: absW * 0.31, y: absH * 0.57 },
-        { x: 0, y: absH * 0.35 },
-        { x: absW * 0.38, y: absH * 0.35 },
-      ];
-      return new Polygon(points, {
+      const starPoints: { x: number; y: number }[] = [];
+      const spikes = 5;
+      const step = Math.PI / spikes;
+      for (let i = 0; i < 2 * spikes; i++) {
+        const r = i % 2 === 0 ? 0.5 : 0.22;
+        const angle = i * step - Math.PI / 2;
+        starPoints.push({
+          x: (0.5 + Math.cos(angle) * r) * absW,
+          y: (0.5 + Math.sin(angle) * r) * absH,
+        });
+      }
+      return new Polygon(starPoints, {
         left,
         top,
         fill,
@@ -196,7 +320,7 @@ export function CanvasArea({
       onObjectModified();
     });
 
-    // 2. Mouse down handler for drag-to-create & text creation
+    // 2. Mouse down handler for drag-to-create, fill, & text creation
     canvas.on('mouse:down', (opt) => {
       const currentTool = propsRef.current.activeTool;
       if (currentTool === 'select' || currentTool === 'pen' || currentTool === 'eraser') return;
@@ -205,6 +329,27 @@ export function CanvasArea({
       const { color1, color2, strokeWidth, fillEnabled } = propsRef.current;
       const fillColor = fillEnabled ? color2 : 'transparent';
       const strokeColor = color1;
+
+      // Handle Fill Tool (Paint Bucket)
+      if (currentTool === 'fill') {
+        const activeFillColor = propsRef.current.color2 || '#22c55e';
+        const target = opt.target;
+
+        // If clicked on an existing vector object with fill property
+        if (target && !(target as any).data?.isGrid && (target as any).set) {
+          (target as any).set('fill', activeFillColor);
+          canvas.renderAll();
+          onObjectModified();
+          return;
+        }
+
+        // Run pixel-level flood fill for enclosed pencil/line areas
+        const filled = performFloodFill(canvas, pointer.x, pointer.y, activeFillColor);
+        if (filled) {
+          onObjectModified();
+        }
+        return;
+      }
 
       // Handle Text tool: single click adds Textbox and enters editing
       if (currentTool === 'text') {
@@ -234,65 +379,53 @@ export function CanvasArea({
 
       let initialObj: FabricObject | null = null;
 
-      switch (currentTool) {
-        case 'rectangle':
-          initialObj = new Rect({
-            left: pointer.x,
-            top: pointer.y,
-            width: 1,
-            height: 1,
-            fill: fillColor,
-            stroke: strokeColor,
-            strokeWidth,
-            rx: 2,
-            ry: 2,
-          });
-          break;
-
-        case 'circle':
-          initialObj = new Circle({
-            left: pointer.x,
-            top: pointer.y,
-            radius: 1,
-            fill: fillColor,
-            stroke: strokeColor,
-            strokeWidth,
-          });
-          break;
-
-        case 'triangle':
-          initialObj = new Triangle({
-            left: pointer.x,
-            top: pointer.y,
-            width: 1,
-            height: 1,
-            fill: fillColor,
-            stroke: strokeColor,
-            strokeWidth,
-          });
-          break;
-
-        case 'line':
-          initialObj = new Line([pointer.x, pointer.y, pointer.x, pointer.y], {
-            stroke: strokeColor,
-            strokeWidth: Math.max(1, strokeWidth),
-          });
-          break;
-
-        case 'star':
-        case 'arrow':
-        case 'diamond':
-          initialObj = createCustomShape(
-            currentTool,
-            pointer.x,
-            pointer.y,
-            1,
-            1,
-            fillColor,
-            strokeColor,
-            strokeWidth
-          );
-          break;
+      if (currentTool === 'rectangle') {
+        initialObj = new Rect({
+          left: pointer.x,
+          top: pointer.y,
+          width: 1,
+          height: 1,
+          fill: fillColor,
+          stroke: strokeColor,
+          strokeWidth,
+          rx: 2,
+          ry: 2,
+        });
+      } else if (currentTool === 'circle') {
+        initialObj = new Circle({
+          left: pointer.x,
+          top: pointer.y,
+          radius: 1,
+          fill: fillColor,
+          stroke: strokeColor,
+          strokeWidth,
+        });
+      } else if (currentTool === 'triangle') {
+        initialObj = new Triangle({
+          left: pointer.x,
+          top: pointer.y,
+          width: 1,
+          height: 1,
+          fill: fillColor,
+          stroke: strokeColor,
+          strokeWidth,
+        });
+      } else if (currentTool === 'line') {
+        initialObj = new Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+          stroke: strokeColor,
+          strokeWidth: Math.max(1, strokeWidth),
+        });
+      } else if (isCustomShape(currentTool)) {
+        initialObj = createCustomShape(
+          currentTool,
+          pointer.x,
+          pointer.y,
+          1,
+          1,
+          fillColor,
+          strokeColor,
+          strokeWidth
+        );
       }
 
       if (initialObj) {
@@ -339,7 +472,7 @@ export function CanvasArea({
           x2: pointer.x,
           y2: pointer.y,
         });
-      } else if (currentTool === 'star' || currentTool === 'arrow' || currentTool === 'diamond') {
+      } else if (isCustomShape(currentTool)) {
         canvas.remove(shape);
         const { color1, color2, strokeWidth, fillEnabled } = propsRef.current;
         const fillColor = fillEnabled ? color2 : 'transparent';
@@ -360,18 +493,17 @@ export function CanvasArea({
       canvas.renderAll();
     });
 
-    // 4. Mouse up handler (finalize shape creation)
+    // 4. Mouse up handler (finalize shape creation without deselecting tool)
     canvas.on('mouse:up', () => {
       if (isDrawingShapeRef.current && activeShapeRef.current) {
-        const shape = activeShapeRef.current;
         isDrawingShapeRef.current = false;
         shapeOriginRef.current = null;
         activeShapeRef.current = null;
 
-        canvas.setActiveObject(shape);
+        // Keep current tool active (do not force 'select') so user can draw multiple shapes
+        canvas.discardActiveObject();
         canvas.renderAll();
         onObjectModified();
-        onSelectionChange(shape);
       }
     });
 
@@ -406,6 +538,10 @@ export function CanvasArea({
       brush.width = Math.max(16, strokeWidth * 3);
       canvas.freeDrawingBrush = brush;
       canvas.defaultCursor = 'crosshair';
+    } else if (activeTool === 'fill') {
+      canvas.selection = false;
+      canvas.defaultCursor = 'cell';
+      canvas.hoverCursor = 'cell';
     } else if (activeTool !== 'select') {
       canvas.selection = false;
       canvas.defaultCursor = 'crosshair';
@@ -499,6 +635,14 @@ export function CanvasArea({
       ref={containerRef}
       className="flex-1 overflow-auto relative bg-[#18181b] flex items-center justify-center p-8 select-none"
       onMouseLeave={() => onMouseMoveCoords(null)}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/') && onAddImage) {
+          onAddImage(file);
+        }
+      }}
     >
       {/* MS Paint Logical White Canvas Container (1200 × 700) */}
       <div
