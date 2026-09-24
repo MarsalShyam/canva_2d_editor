@@ -6,8 +6,14 @@ interface FooterProps {
 
 export function Footer({ onCreateCanvas }: FooterProps) {
   return (
-    <footer className="bg-slate-950 text-slate-400 text-xs border-t border-slate-800/80 pt-16 pb-12 px-4 sm:px-6 lg:px-8 font-sans w-full flex flex-col items-center">
-      <div className="max-w-7xl mx-auto w-full">
+    <footer className="relative isolate bg-slate-950 text-slate-400 text-xs pt-16 pb-12 px-4 sm:px-6 lg:px-8 font-sans w-full flex flex-col items-center overflow-hidden">
+      {/* Dark Grid Background */}
+      <div className="absolute inset-0 z-0 bg-slate-950 pointer-events-none">
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      </div>
+
+      {/* Content on top */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full">
 
         {/* Main Columns */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12 pb-14 border-b border-slate-800/70">
@@ -101,7 +107,7 @@ export function Footer({ onCreateCanvas }: FooterProps) {
                 </a>
               </li>
               <li>
-                <a href="#cloud-save" className="hover:text-white transition-colors">
+                <a href="#features-section" className="hover:text-white transition-colors">
                   Cloud Saving
                 </a>
               </li>
@@ -173,7 +179,7 @@ export function Footer({ onCreateCanvas }: FooterProps) {
           </div>
 
           <div>
-            © 2026 ChullDraw. Made for creators.
+            © 2026 ChullDraw . All rights reserved.
           </div>
         </div>
       </div>

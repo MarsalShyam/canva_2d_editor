@@ -56,9 +56,13 @@ export function ToolsSection() {
   ];
 
   return (
-    <section className="py-20 sm:py-24 bg-slate-50/60 px-4 sm:px-6 lg:px-8 border-t border-slate-200/70 w-full flex flex-col items-center">
-      <div className="max-w-7xl mx-auto w-full">
+    <section className="relative isolate py-15 sm:py-18 px-4 sm:px-6 lg:px-8 border-t border-slate-200/70 w-full flex flex-col items-center overflow-hidden">
+      {/* Background Gradients & Glows */}
+      {/* <div className="absolute inset-0 z-0 h-full w-full bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)] pointer-events-none" /> */}
+      <div className="absolute -bottom-20 left-0 -right-20 h-[1000px] w-[800px] -translate-x-[30%] translate-y-[20%] rounded-full bg-[rgba(173,109,244,0.4)] opacity-80 blur-[80px] pointer-events-none z-0" />
 
+      {/* Content on top */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full">
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm">
             Core Toolkit

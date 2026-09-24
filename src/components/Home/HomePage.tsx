@@ -6,7 +6,6 @@ import { TrustStrip } from './TrustStrip';
 import { FeaturesSection } from './FeaturesSection';
 import { HowItWorks } from './HowItWorks';
 import { ToolsSection } from './ToolsSection';
-import { CloudSaveSection } from './CloudSaveSection';
 import { CTASection } from './CTASection';
 import { Footer } from './Footer';
 
@@ -52,13 +51,10 @@ export function HomePage() {
       {/* 6. Core Tools Showcase & Shortcuts */}
       <ToolsSection />
 
-      {/* 7. Firestore Cloud Sync & Persistence */}
-      <CloudSaveSection />
-
-      {/* 8. Bottom Call to Action */}
+      {/* 7. Bottom Call to Action */}
       <CTASection onCreateCanvas={handleCreateCanvas} isCreating={isCreating} />
 
-      {/* 9. Comprehensive Multi-Column Footer */}
+      {/* 8. Comprehensive Multi-Column Footer */}
       <Footer onCreateCanvas={handleCreateCanvas} />
     </div>
   );

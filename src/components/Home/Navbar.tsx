@@ -352,21 +352,11 @@ export function Navbar({ onCreateCanvas, isCreating }: NavbarProps) {
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  const el = document.getElementById('cloud-save');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
-              >
-                Cloud Saving
-              </button>
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
                   onCreateCanvas();
                 }}
                 className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                Log In
+                Create Canvas
               </button>
             </div>
           </motion.div>
