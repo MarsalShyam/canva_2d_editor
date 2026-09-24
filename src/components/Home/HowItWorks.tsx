@@ -27,8 +27,18 @@ export function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="py-10 sm:py-12 bg-white px-4 sm:px-6 lg:px-8 border-t border-slate-100 w-full flex flex-col items-center">
-      <div className="max-w-6xl mx-auto w-full">
+    <section id="how-it-works" className="relative isolate py-12 sm:py-16 bg-white px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center overflow-hidden rounded-tl-[150px] rounded-br-[150px]">
+      {/* 2-Color Top-to-Bottom Gradient Background */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-500/10 via-indigo-500/5 to-purple-500/10 pointer-events-none" />
+
+      {/* Top Color Glow (Blue/Cyan - formerly right side) */}
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[1000px] h-[200px] rounded-full bg-[rgba(59,130,246,0.25)] blur-[120px] pointer-events-none z-0" />
+
+      {/* Bottom Color Glow (Purple/Violet - formerly left side) */}
+      <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[1000px] h-[200px] rounded-full bg-[rgba(168,85,247,0.25)] blur-[120px] pointer-events-none z-0" />
+
+      {/* Content on top */}
+      <div className="relative z-10 max-w-6xl mx-auto w-full">
 
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">

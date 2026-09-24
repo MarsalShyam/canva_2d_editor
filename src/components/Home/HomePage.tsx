@@ -8,6 +8,7 @@ import { HowItWorks } from './HowItWorks';
 import { ToolsSection } from './ToolsSection';
 import { CTASection } from './CTASection';
 import { Footer } from './Footer';
+import { CustomCursor } from './CustomCursor';
 
 import { useFirestore } from '../../hooks/useFirestore';
 import { showToast } from '../shared/Toast';
@@ -56,6 +57,9 @@ export function HomePage() {
 
       {/* 8. Comprehensive Multi-Column Footer */}
       <Footer onCreateCanvas={handleCreateCanvas} />
+
+      {/* Interactive Custom Cursor with colorful ink trailing animation */}
+      <CustomCursor />
     </div>
   );
 }

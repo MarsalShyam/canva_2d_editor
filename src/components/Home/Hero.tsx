@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Plus, ArrowDown, Sparkles, Loader2 } from 'lucide-react';
+import { Plus, ArrowDown, Loader2 } from 'lucide-react';
 import { ProductPreview } from './ProductPreview';
 
 interface HeroProps {
