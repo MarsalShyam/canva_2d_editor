@@ -63,6 +63,8 @@ export const PAINT_PALETTE_ROW2: ColorPreset[] = [
 ];
 
 export const ALL_PAINT_COLORS = [...PAINT_PALETTE_ROW1, ...PAINT_PALETTE_ROW2];
+export const COLOR_PRESETS: ColorPreset[] = ALL_PAINT_COLORS;
+
 
 /** Font options */
 export const FONT_OPTIONS = [

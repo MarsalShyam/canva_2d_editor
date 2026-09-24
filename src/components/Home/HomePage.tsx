@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import {
   Paintbrush,
   Plus,
-  Layers,
   Palette,
   Cloud,
   MousePointerClick,
@@ -14,6 +13,7 @@ import {
   Type,
   Pencil,
 } from 'lucide-react';
+
 import { useFirestore } from '../../hooks/useFirestore';
 import { showToast } from '../shared/Toast';
 

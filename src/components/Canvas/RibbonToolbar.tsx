@@ -96,8 +96,8 @@ export function RibbonToolbar({
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState<'file' | 'edit' | 'view' | 'export' | null>(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [showCustomColorPicker, setShowCustomColorPicker] = useState(false);
   const customColorInputRef = useRef<HTMLInputElement>(null);
+
 
   // Close menus on click outside
   useEffect(() => {
@@ -190,8 +190,9 @@ export function RibbonToolbar({
             ) : (
               <span className="text-emerald-400 flex items-center gap-1">
                 <Check className="w-3.5 h-3.5" />
-                Saved ✓
+                Saved ✓ {lastSaved ? lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
               </span>
+
             )}
           </div>
         </div>

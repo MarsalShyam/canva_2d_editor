@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { COLOR_PRESETS } from '../../utils/constants';
+import type { ColorPreset } from '../../types/canvas';
+
 
 interface ColorPickerProps {
   label: string;
@@ -61,7 +63,8 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
         <div className="absolute top-full left-0 mt-2 z-50 w-56 p-3 rounded-xl bg-surface-dark border border-border-light shadow-2xl">
           {/* Color grid */}
           <div className="grid grid-cols-6 gap-1.5 mb-3">
-            {COLOR_PRESETS.map((preset) => (
+            {COLOR_PRESETS.map((preset: ColorPreset) => (
+
               <button
                 key={preset.value}
                 onClick={() => {

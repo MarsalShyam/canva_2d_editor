@@ -1,6 +1,5 @@
 // Canvas Editor TypeScript Types
 
-import type { Canvas as FabricCanvas, FabricObject } from 'fabric';
 
 /** Supported shape and tool types */
 export type ToolType =
