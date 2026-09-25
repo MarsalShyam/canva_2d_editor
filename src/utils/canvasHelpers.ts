@@ -1,19 +1,11 @@
 import type { Canvas as FabricCanvas } from 'fabric';
 
-/*It Serialize a Fabric.js canvas to JSON string. and Includes custom properties we want to persist.*/
+/** Serialize a Fabric.js canvas to a JSON string, persisting custom properties. */
 export function serializeCanvas(canvas: FabricCanvas): string {
   try {
-    const json = (canvas as any).toJSON?.([
-      'selectable',
-      'evented',
-      'name',
-      'data',
-    ]) || (canvas as any).toObject?.([
-      'selectable',
-      'evented',
-      'name',
-      'data',
-    ]);
+    const json =
+      (canvas as any).toJSON?.(['selectable', 'evented', 'name', 'data']) ||
+      (canvas as any).toObject?.(['selectable', 'evented', 'name', 'data']);
     return JSON.stringify(json);
   } catch (err) {
     console.error('Error serializing canvas:', err);
@@ -21,15 +13,13 @@ export function serializeCanvas(canvas: FabricCanvas): string {
   }
 }
 
-/*Load canvas state from a JSON string.*/
+/** Load canvas state from a JSON string produced by serializeCanvas(). */
 export async function deserializeCanvas(
   canvas: FabricCanvas,
   jsonString: string
 ): Promise<void> {
   if (!canvas) return;
-  if (!jsonString || jsonString.trim() === '' || jsonString === '{}') {
-    return;
-  }
+  if (!jsonString || jsonString.trim() === '' || jsonString === '{}') return;
 
   try {
     const parsed = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
@@ -49,40 +39,23 @@ export async function deserializeCanvas(
   }
 }
 
-/*It Generate a thumbnail from the canvas as a base64 data URL.*/
-export function generateThumbnail(
-  canvas: FabricCanvas,
-  maxWidth = 300
-): string {
-  const canvasWidth = canvas.width || (canvas as any).getWidth?.() || 1200;
-  const scale = maxWidth / canvasWidth;
-  return canvas.toDataURL({
-    format: 'png',
-    multiplier: scale,
-  });
-}
-
-/*Export canvas as PNG data URL.*/
+/** Export the canvas as a PNG data URL at the given pixel multiplier (default 2× for retina). */
 export function exportAsPNG(canvas: FabricCanvas, multiplier = 2): string {
-  return canvas.toDataURL({
-    format: 'png',
-    multiplier,
-  });
+  return canvas.toDataURL({ format: 'png', multiplier });
 }
 
-/*It Export canvas as SVG string.*/
+/** Export the canvas as an SVG string. */
 export function exportAsSVG(canvas: FabricCanvas): string {
   return canvas.toSVG();
 }
 
-/*It Trigger a file download.*/
+/** Trigger a browser file download for any string content or data URL. */
 export function downloadFile(
   content: string,
   filename: string,
   mimeType: string
 ): void {
   const isDataUrl = content.startsWith('data:');
-
   const link = document.createElement('a');
   link.download = filename;
 
@@ -101,4 +74,3 @@ export function downloadFile(
     URL.revokeObjectURL(link.href);
   }
 }
-

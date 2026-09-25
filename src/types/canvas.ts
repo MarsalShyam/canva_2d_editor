@@ -1,7 +1,27 @@
 // Canvas Editor TypeScript Types
-/** Supported shape and tool types */
-export type ToolType = | 'select' | 'pen' | 'eraser' | 'fill' | 'text' | 'rectangle' | 'circle' | 'triangle' | 'line' | 'star' | 'cloud' | 'heart' | 'arrow' | 'arrow-right' | 'arrow-left' | 'arrow-up' | 'arrow-down' | 'diamond';
-/** It containts Object properties editable in the properties panel */
+
+/** All supported drawing tool identifiers */
+export type ToolType =
+  | 'select'
+  | 'pen'
+  | 'eraser'
+  | 'fill'
+  | 'text'
+  | 'rectangle'
+  | 'circle'
+  | 'triangle'
+  | 'line'
+  | 'star'
+  | 'cloud'
+  | 'heart'
+  | 'arrow'
+  | 'arrow-right'
+  | 'arrow-left'
+  | 'arrow-up'
+  | 'arrow-down'
+  | 'diamond';
+
+/** Object properties editable in the properties panel */
 export interface ObjectProperties {
   fill: string;
   stroke: string;
@@ -34,17 +54,11 @@ export interface CanvasDocument {
   updatedAt: any;
 }
 
-/** Canvas history entry for undo/redo */
-export interface HistoryEntry {
-  json: string;
-  timestamp: number;
-}
-
-/** Color preset */
+/** Color preset for the palette */
 export interface ColorPreset {
   name: string;
   value: string;
 }
 
-/** Export format */
+/** Supported export formats */
 export type ExportFormat = 'png' | 'svg' | 'json';

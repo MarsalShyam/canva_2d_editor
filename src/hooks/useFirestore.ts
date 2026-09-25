@@ -13,7 +13,7 @@ import type { CanvasDocument } from '../types/canvas';
 const COLLECTION_NAME = 'canvases';
 const LOCAL_STORAGE_PREFIX = 'canvaflow_doc_';
 
-// Helper to run promises with a timeout
+/** Run a promise with a timeout; rejects with a human-readable message on expiry. */
 function withTimeout<T>(promise: Promise<T>, ms = 3000): Promise<T> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -21,31 +21,23 @@ function withTimeout<T>(promise: Promise<T>, ms = 3000): Promise<T> {
     }, ms);
 
     promise
-      .then((res) => {
-        clearTimeout(timer);
-        resolve(res);
-      })
-      .catch((err) => {
-        clearTimeout(timer);
-        reject(err);
-      });
+      .then((res) => { clearTimeout(timer); resolve(res); })
+      .catch((err) => { clearTimeout(timer); reject(err); });
   });
 }
 
 export function useFirestore() {
   const [isSaving, setIsSaving] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /* Create a new canvas document in Firestore and return its ID.*/
+  /** Create a new canvas document in Firestore and return its ID. Falls back to localStorage. */
   const createCanvas = useCallback(
     async (canvasName = 'Untitled - Paint'): Promise<string> => {
       setError(null);
       const localId = `canvas_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       const initialData = { version: '6.0.0', objects: [] };
 
-      // Save locally first so user data is never lost
       const localDoc: CanvasDocument = {
         id: localId,
         name: canvasName,
@@ -56,47 +48,51 @@ export function useFirestore() {
         updatedAt: new Date(),
       };
 
+      // Persist locally first so user data is never lost on a network failure
       try {
         localStorage.setItem(LOCAL_STORAGE_PREFIX + localId, JSON.stringify(localDoc));
       } catch (e) {
         console.warn('LocalStorage save error:', e);
       }
 
-      // Try saving to Firestore with timeout
       try {
-        const firestorePromise = addDoc(collection(db, COLLECTION_NAME), {
-          name: canvasName,
-          data: initialData,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-        const docRef = await withTimeout(firestorePromise, 3000);
+        const docRef = await withTimeout(
+          addDoc(collection(db, COLLECTION_NAME), {
+            name: canvasName,
+            data: initialData,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          }),
+          3000
+        );
 
-        // Also cache under the Firestore ID locally
+        // Cache under the Firestore ID for future loads
         localStorage.setItem(
           LOCAL_STORAGE_PREFIX + docRef.id,
           JSON.stringify({ ...localDoc, id: docRef.id })
         );
         return docRef.id;
       } catch (err) {
-        console.warn('Firestore create fallback to local:', err);
+        console.warn('Firestore create failed — falling back to local ID:', err);
         return localId;
       }
     },
     []
   );
 
-  /* Saving | updating an existing canvas document by ID.*/
+  /** Save (update) an existing canvas document. Syncs Firestore with a localStorage backup. */
   const saveCanvas = useCallback(
     async (canvasId: string, payload: { name: string; data: any }): Promise<void> => {
       try {
         setIsSaving(true);
         setError(null);
 
-        const dataObject = typeof payload.data === 'string' ? JSON.parse(payload.data) : payload.data;
-        const jsonString = typeof payload.data === 'string' ? payload.data : JSON.stringify(payload.data);
+        const dataObject =
+          typeof payload.data === 'string' ? JSON.parse(payload.data) : payload.data;
+        const jsonString =
+          typeof payload.data === 'string' ? payload.data : JSON.stringify(payload.data);
 
-        // Update local storage backup
+        // Update localStorage backup first
         try {
           const cached = localStorage.getItem(LOCAL_STORAGE_PREFIX + canvasId);
           const parsed = cached ? JSON.parse(cached) : {};
@@ -114,21 +110,18 @@ export function useFirestore() {
           console.warn('LocalStorage update warning:', e);
         }
 
-        // Sync to Firestore
+        // Sync to Firestore (best-effort)
         try {
-          const docRef = doc(db, COLLECTION_NAME, canvasId);
-          const firestorePromise = setDoc(
-            docRef,
-            {
-              name: payload.name,
-              data: dataObject,
-              updatedAt: serverTimestamp(),
-            },
-            { merge: true }
+          await withTimeout(
+            setDoc(
+              doc(db, COLLECTION_NAME, canvasId),
+              { name: payload.name, data: dataObject, updatedAt: serverTimestamp() },
+              { merge: true }
+            ),
+            3500
           );
-          await withTimeout(firestorePromise, 3500);
         } catch (firestoreErr) {
-          console.warn('Firestore sync failed, saved to localStorage:', firestoreErr);
+          console.warn('Firestore sync failed — canvas is safe in localStorage:', firestoreErr);
         }
 
         setLastSaved(new Date());
@@ -143,61 +136,68 @@ export function useFirestore() {
     []
   );
 
-  /* Loading a canvas document by ID. Returns null if document does not exist.*/
+  /** Load a canvas document by ID. Tries Firestore first, falls back to localStorage. */
   const loadCanvas = useCallback(
     async (canvasId: string): Promise<CanvasDocument | null> => {
       try {
-        setIsLoading(true);
         setError(null);
 
-        // Try Firestore first with a 3-second timeout
+        // Attempt Firestore load with timeout
         try {
-          const docRef = doc(db, COLLECTION_NAME, canvasId);
-          const docSnap = await withTimeout(getDoc(docRef), 3000);
+          const docSnap = await withTimeout(getDoc(doc(db, COLLECTION_NAME, canvasId)), 3000);
 
           if (docSnap.exists()) {
             const raw = docSnap.data();
-            const canvasData = raw.data || (raw.canvasJSON ? JSON.parse(raw.canvasJSON) : { version: '6.0.0', objects: [] });
+            const canvasData =
+              raw.data ||
+              (raw.canvasJSON ? JSON.parse(raw.canvasJSON) : { version: '6.0.0', objects: [] });
+
             const loadedDoc: CanvasDocument = {
               id: docSnap.id,
               name: raw.name || raw.title || 'Untitled - Paint',
               title: raw.name || raw.title || 'Untitled - Paint',
               data: canvasData,
-              canvasJSON: typeof canvasData === 'string' ? canvasData : JSON.stringify(canvasData),
+              canvasJSON:
+                typeof canvasData === 'string' ? canvasData : JSON.stringify(canvasData),
               createdAt: raw.createdAt?.toDate?.() || new Date(),
               updatedAt: raw.updatedAt?.toDate?.() || new Date(),
             };
+
+            // Update localStorage cache with fresh Firestore data
             localStorage.setItem(LOCAL_STORAGE_PREFIX + canvasId, JSON.stringify(loadedDoc));
             return loadedDoc;
           }
         } catch (firestoreErr) {
-          console.warn('Firestore load error/timeout, trying localStorage:', firestoreErr);
+          console.warn('Firestore load failed — trying localStorage:', firestoreErr);
         }
 
-        // Fallback to local storage
+        // Fallback: read from localStorage
         const localData = localStorage.getItem(LOCAL_STORAGE_PREFIX + canvasId);
         if (localData) {
           const parsed = JSON.parse(localData);
-          const canvasData = parsed.data || (parsed.canvasJSON ? JSON.parse(parsed.canvasJSON) : { version: '6.0.0', objects: [] });
+          const canvasData =
+            parsed.data ||
+            (parsed.canvasJSON
+              ? JSON.parse(parsed.canvasJSON)
+              : { version: '6.0.0', objects: [] });
+
           return {
             id: canvasId,
             name: parsed.name || parsed.title || 'Untitled - Paint',
             title: parsed.name || parsed.title || 'Untitled - Paint',
             data: canvasData,
-            canvasJSON: typeof canvasData === 'string' ? canvasData : JSON.stringify(canvasData),
+            canvasJSON:
+              typeof canvasData === 'string' ? canvasData : JSON.stringify(canvasData),
             createdAt: parsed.createdAt ? new Date(parsed.createdAt) : new Date(),
             updatedAt: parsed.updatedAt ? new Date(parsed.updatedAt) : new Date(),
           };
         }
 
-        // If not found in either Firestore or LocalStorage
-        return null;
+        return null; // Not found anywhere
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to load canvas';
         setError(message);
         return null;
-      } finally {
-        setIsLoading(false);
       }
     },
     []
@@ -208,7 +208,6 @@ export function useFirestore() {
     saveCanvas,
     loadCanvas,
     isSaving,
-    isLoading,
     lastSaved,
     error,
   };

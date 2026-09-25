@@ -12,11 +12,10 @@ const firebaseConfig = {
 
 if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
   throw new Error(
-    'Firebase initialization failed: Missing required environment variables. Check your .env setup Bro!'
+    'Firebase initialization failed: Missing required environment variables (VITE_FIREBASE_API_KEY, VITE_FIREBASE_PROJECT_ID). Check your .env file.'
   );
 }
 
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export default app;
-

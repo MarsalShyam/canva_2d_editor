@@ -3,7 +3,7 @@ import type { Canvas as FabricCanvas } from 'fabric';
 import { serializeCanvas, deserializeCanvas } from '../utils/canvasHelpers';
 import { MAX_HISTORY_SIZE } from '../utils/constants';
 
-/* It is a Custom hook for canvas undo/redo history management.*/
+/** Manages an in-memory undo/redo history stack for a Fabric.js canvas. */
 export function useCanvasHistory(canvas: FabricCanvas | null) {
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -12,20 +12,18 @@ export function useCanvasHistory(canvas: FabricCanvas | null) {
   const currentIndexRef = useRef(-1);
   const isRestoringRef = useRef(false);
 
-  /* Saveing the current canvas state to history.*/
+  /** Snapshot the current canvas state and push it onto the history stack. */
   const saveState = useCallback(() => {
     if (!canvas || isRestoringRef.current) return;
 
     const json = serializeCanvas(canvas);
     const currentIndex = currentIndexRef.current;
 
-    // Remove any future states (from redo) when new action happens
+    // Discard any redo states that existed ahead of the current position
     historyRef.current = historyRef.current.slice(0, currentIndex + 1);
-
-    // Adding new state
     historyRef.current.push(json);
 
-    // Trim history if it exceeds max size
+    // Keep the stack bounded to MAX_HISTORY_SIZE
     if (historyRef.current.length > MAX_HISTORY_SIZE) {
       historyRef.current = historyRef.current.slice(
         historyRef.current.length - MAX_HISTORY_SIZE
@@ -37,37 +35,35 @@ export function useCanvasHistory(canvas: FabricCanvas | null) {
     setCanRedo(false);
   }, [canvas]);
 
-  /* Undo the last action.*/
+  /** Restore the previous canvas state. */
   const undo = useCallback(async () => {
     if (!canvas || currentIndexRef.current <= 0) return;
 
     isRestoringRef.current = true;
     currentIndexRef.current -= 1;
 
-    const json = historyRef.current[currentIndexRef.current];
-    await deserializeCanvas(canvas, json);
+    await deserializeCanvas(canvas, historyRef.current[currentIndexRef.current]);
 
     isRestoringRef.current = false;
     setCanUndo(currentIndexRef.current > 0);
     setCanRedo(currentIndexRef.current < historyRef.current.length - 1);
   }, [canvas]);
 
-  /* Redoing the last undone action.*/
+  /** Re-apply the last undone state. */
   const redo = useCallback(async () => {
     if (!canvas || currentIndexRef.current >= historyRef.current.length - 1) return;
 
     isRestoringRef.current = true;
     currentIndexRef.current += 1;
 
-    const json = historyRef.current[currentIndexRef.current];
-    await deserializeCanvas(canvas, json);
+    await deserializeCanvas(canvas, historyRef.current[currentIndexRef.current]);
 
     isRestoringRef.current = false;
     setCanUndo(currentIndexRef.current > 0);
     setCanRedo(currentIndexRef.current < historyRef.current.length - 1);
   }, [canvas]);
 
-  /* It clear history entirely (used on fresh load).*/
+  /** Wipe the entire history stack — called on fresh canvas load. */
   const clearHistory = useCallback(() => {
     historyRef.current = [];
     currentIndexRef.current = -1;
@@ -75,13 +71,5 @@ export function useCanvasHistory(canvas: FabricCanvas | null) {
     setCanRedo(false);
   }, []);
 
-  return {
-    saveState,
-    undo,
-    redo,
-    clearHistory,
-    canUndo,
-    canRedo,
-    isRestoring: isRestoringRef.current,
-  };
+  return { saveState, undo, redo, clearHistory, canUndo, canRedo };
 }

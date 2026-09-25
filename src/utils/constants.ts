@@ -1,30 +1,23 @@
 import type { ColorPreset } from '../types/canvas';
 
-/** Default canvas dimensions (Assignment specification: 1200 × 700) */
+/** Canvas dimensions (1200 × 700 px) */
 export const CANVAS_WIDTH = 1200;
 export const CANVAS_HEIGHT = 700;
 
-/** Zoom limitations */
+/** Zoom limits and step increment */
 export const MIN_ZOOM = 0.25;
 export const MAX_ZOOM = 4;
 export const ZOOM_STEP = 0.1;
 
-/** Default styling */
+/** Default canvas object styling */
 export const DEFAULT_FILL = '#22C55E';
 export const DEFAULT_STROKE = '#000000';
 export const DEFAULT_STROKE_WIDTH = 2;
-export const DEFAULT_OPACITY = 1;
-export const DEFAULT_FONT_SIZE = 28;
-export const DEFAULT_FONT_FAMILY = 'Arial';
 
-/** Pen tool defaults */
-export const PEN_DEFAULT_COLOR = '#000000';
-export const PEN_DEFAULT_WIDTH = 4;
-
-/** History limits */
+/** Maximum undo/redo history entries kept in memory */
 export const MAX_HISTORY_SIZE = 50;
 
-/** Stroke width options in MS Paint ribbon */
+/** Stroke width options shown in the ribbon toolbar */
 export const STROKE_WIDTH_OPTIONS = [
   { label: '1px', value: 1 },
   { label: '2px', value: 2 },
@@ -35,7 +28,7 @@ export const STROKE_WIDTH_OPTIONS = [
   { label: '24px', value: 24 },
 ];
 
-/** Standard MS Paint 2-Row Color Palette */
+/** MS Paint–style 2-row color palette — Row 1 (dark/primary colors) */
 export const PAINT_PALETTE_ROW1: ColorPreset[] = [
   { name: 'Black', value: '#000000' },
   { name: 'Dark Gray', value: '#7F7F7F' },
@@ -49,6 +42,7 @@ export const PAINT_PALETTE_ROW1: ColorPreset[] = [
   { name: 'Purple', value: '#A349A4' },
 ];
 
+/** MS Paint–style 2-row color palette — Row 2 (light/pastel colors) */
 export const PAINT_PALETTE_ROW2: ColorPreset[] = [
   { name: 'White', value: '#FFFFFF' },
   { name: 'Light Gray', value: '#C3C3C3' },
@@ -62,11 +56,13 @@ export const PAINT_PALETTE_ROW2: ColorPreset[] = [
   { name: 'Lavender', value: '#C8BFE7' },
 ];
 
-export const ALL_PAINT_COLORS = [...PAINT_PALETTE_ROW1, ...PAINT_PALETTE_ROW2];
-export const COLOR_PRESETS: ColorPreset[] = ALL_PAINT_COLORS;
+/** Full 20-color palette used by the ColorPicker dropdown */
+export const COLOR_PRESETS: ColorPreset[] = [
+  ...PAINT_PALETTE_ROW1,
+  ...PAINT_PALETTE_ROW2,
+];
 
-
-/** Font options */
+/** Font family options for the text properties panel */
 export const FONT_OPTIONS = [
   'Arial',
   'Segoe UI',
