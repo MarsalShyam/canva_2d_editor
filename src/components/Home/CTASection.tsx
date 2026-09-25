@@ -8,15 +8,8 @@ interface CTASectionProps {
 export function CTASection({ onCreateCanvas, isCreating }: CTASectionProps) {
   return (
     <section className="relative isolate py-12 sm:py-16 bg-slate-950 text-white overflow-hidden px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center rounded-tr-[180px] rounded-br-[180px]">
-      {/* Dark Grid Background */}
-      {/* <div className="absolute inset-0 z-0 bg-slate-950 pointer-events-none">
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-      </div> */}
 
-      {/* Background Decorative Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-violet-400/20 rounded-full blur-[140px] pointer-events-none z-0" />
-
-      {/* Content on top */}
       <div className="relative z-10 max-w-4xl mx-auto text-center">
 
         <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">

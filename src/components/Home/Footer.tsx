@@ -7,12 +7,10 @@ interface FooterProps {
 export function Footer({ onCreateCanvas }: FooterProps) {
   return (
     <footer className="relative isolate bg-slate-950 text-slate-400 text-xs pt-16 pb-12 px-4 sm:px-6 lg:px-8 font-sans w-full flex flex-col items-center overflow-hidden rounded-tr-[120px]">
-      {/* Dark Grid Background */}
       <div className="absolute inset-0 z-0 bg-slate-950 pointer-events-none">
         <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
       </div>
 
-      {/* Content on top */}
       <div className="relative z-10 max-w-7xl mx-auto w-full">
 
         {/* Main Columns */}
@@ -44,7 +42,7 @@ export function Footer({ onCreateCanvas }: FooterProps) {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/shyam-kumar-99bb0133b/"
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-700 transition-colors"
@@ -55,7 +53,7 @@ export function Footer({ onCreateCanvas }: FooterProps) {
                 </svg>
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/mrshyamkumar_/"
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-700 transition-colors"
@@ -167,7 +165,7 @@ export function Footer({ onCreateCanvas }: FooterProps) {
           </div>
         </div>
 
-        {/* Bottom Bar: Language & Copyright */}
+        {/* Language & Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 text-xs">
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-slate-400" />

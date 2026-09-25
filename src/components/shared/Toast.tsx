@@ -14,9 +14,7 @@ interface ToastData {
 
 let addToastFn: ((toast: Omit<ToastData, 'id'>) => void) | null = null;
 
-/**
- * Show a toast notification from anywhere in the app.
- */
+/* Show a toast notification from anywhere in the app.*/
 export function showToast(type: ToastType, message: string, duration = 3500) {
   addToastFn?.({ type, message, duration });
 }

@@ -15,13 +15,9 @@ import {
 export function FeaturesSection() {
   return (
     <section id="features-section" className="relative isolate py-12 sm:py-16 bg-[#f8fafc] px-4 sm:px-6 lg:px-8 overflow-hidden w-full flex flex-col items-center">
-      {/* Background glow behind content */}
+
       <div className="absolute -bottom-20 -right-40 h-[1300px] w-[600px] -translate-x-[30%] translate-y-[20%] rounded-lg bg-[rgba(109,174,244,0.7)] opacity-50 blur-[120px] pointer-events-none z-0" />
-
-      {/* Content on top */}
       <div className="relative z-10 max-w-7xl mx-auto w-full">
-
-        {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-20">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-4">
             <Sparkles className="w-3.5 h-3.5 text-blue-600" />

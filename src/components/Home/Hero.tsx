@@ -23,16 +23,6 @@ export function Hero({ onCreateCanvas, isCreating }: HeroProps) {
 
       {/* Main Content */}
       <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
-        {/* Eyebrow Pill */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold tracking-wide uppercase shadow-sm mb-6"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-          <span>The Simple 2D Creative Workspace</span>
-        </motion.div> */}
 
         {/* Main Headline */}
         <motion.h1

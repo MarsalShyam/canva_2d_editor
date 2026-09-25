@@ -34,31 +34,15 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
-      {/* 1. Sticky Navigation Bar with Dropdowns */}
+
       <Navbar onCreateCanvas={handleCreateCanvas} isCreating={isCreating} />
-
-      {/* 2. Hero Section with Product Showcase Visual */}
       <Hero onCreateCanvas={handleCreateCanvas} isCreating={isCreating} />
-
-      {/* 3. Credibility / Feature Strip */}
       <TrustStrip />
-
-      {/* 4. Bento Grid Feature Suite */}
       <FeaturesSection />
-
-      {/* 5. 3-Step Process (From Blank Canvas to Finished Idea) */}
       <HowItWorks />
-
-      {/* 6. Core Tools Showcase & Shortcuts */}
       <ToolsSection />
-
-      {/* 7. Bottom Call to Action */}
       <CTASection onCreateCanvas={handleCreateCanvas} isCreating={isCreating} />
-
-      {/* 8. Comprehensive Multi-Column Footer */}
       <Footer onCreateCanvas={handleCreateCanvas} />
-
-      {/* Interactive Custom Cursor with colorful ink trailing animation */}
       <CustomCursor />
     </div>
   );

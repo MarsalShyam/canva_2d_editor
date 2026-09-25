@@ -69,7 +69,7 @@ export function CustomCursor() {
         p.y += p.vy;
         p.life += 1;
         p.alpha = Math.max(0, 1 - p.life / p.maxLife);
-        p.size = Math.max(0.5, p.size * 0.96);
+        p.size = Math.max(0.5, p.size * 0.96); //pSize
 
         if (p.life >= p.maxLife || p.alpha <= 0) {
           particles.splice(i, 1);
