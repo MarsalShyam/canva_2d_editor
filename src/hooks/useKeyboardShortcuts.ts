@@ -17,9 +17,7 @@ interface KeyboardShortcutsConfig {
   setActiveTool: (tool: ToolType) => void;
 }
 
-/**
- * Custom hook for keyboard shortcut bindings in the MS Paint editor.
- */
+/* Custom hook for keyboard shortcut bindings in the MS Paint editor.*/
 export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
   const configRef = useRef(config);
   configRef.current = config;

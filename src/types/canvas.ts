@@ -1,28 +1,7 @@
 // Canvas Editor TypeScript Types
-
-
 /** Supported shape and tool types */
-export type ToolType =
-  | 'select'
-  | 'pen'
-  | 'eraser'
-  | 'fill'
-  | 'text'
-  | 'rectangle'
-  | 'circle'
-  | 'triangle'
-  | 'line'
-  | 'star'
-  | 'cloud'
-  | 'heart'
-  | 'arrow'
-  | 'arrow-right'
-  | 'arrow-left'
-  | 'arrow-up'
-  | 'arrow-down'
-  | 'diamond';
-
-/** Object properties editable in the properties panel */
+export type ToolType = | 'select' | 'pen' | 'eraser' | 'fill' | 'text' | 'rectangle' | 'circle' | 'triangle' | 'line' | 'star' | 'cloud' | 'heart' | 'arrow' | 'arrow-right' | 'arrow-left' | 'arrow-up' | 'arrow-down' | 'diamond';
+/** It containts Object properties editable in the properties panel */
 export interface ObjectProperties {
   fill: string;
   stroke: string;

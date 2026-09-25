@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { HomePage } from './components/Home/HomePage';
-import { CanvasEditor } from './components/Canvas/CanvasEditor';
-import { ToastProvider } from './components/shared/Toast';
+import { HomePage } from './components/Home/HomePage.tsx';
+import { CanvasEditor } from './components/Canvas/CanvasEditor.tsx';
+import { ToastProvider } from './components/shared/Toast.tsx';
 
 function App() {
   return (

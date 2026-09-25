@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
-/* ========================= */
-/* Design System Tokens       */
-/* ========================= */
+
 @theme {
   --color-primary: #6C5CE7;
   --color-primary-light: #A29BFE;
@@ -42,9 +40,7 @@
   --radius-2xl: 32px;
 }
 
-/* ========================= */
-/* Global Defaults           */
-/* ========================= */
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -69,9 +65,8 @@
 }
 
 
-/* ========================= */
 /* Custom Scrollbar            */
-/* ========================= */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -90,37 +85,60 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* ========================= */
-/* Utility Animations          */
-/* ========================= */
+/* Utility Animations */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 @keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
@@ -134,9 +152,8 @@
   animation: gradient-shift 5s ease infinite;
 }
 
-/* ========================= */
+
 /* Glass Morphism Utilities    */
-/* ========================= */
 .glass {
   background: var(--color-glass);
   backdrop-filter: blur(20px);
@@ -151,9 +168,7 @@
   border: 1px solid var(--color-border-light);
 }
 
-/* ========================= */
-/* Tooltip styles              */
-/* ========================= */
+/* Tooltip styles   */
 .tooltip-container {
   position: relative;
 }
@@ -183,9 +198,7 @@
   transform: translateX(-50%) scale(1);
 }
 
-/* ========================= */
-/* Canvas & Editor Layout      */
-/* ========================= */
+/* Canvas & Editor Layout   */
 .canvas-checkered-bg {
   background-color: #2a2a3e;
   background-image:
@@ -197,9 +210,7 @@
   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 }
 
-/* ========================= */
 /* React Hot Toast Overrides   */
-/* ========================= */
 .toast-custom {
   font-family: var(--font-family-body) !important;
 }

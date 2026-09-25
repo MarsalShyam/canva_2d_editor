@@ -1,9 +1,6 @@
 import type { Canvas as FabricCanvas } from 'fabric';
 
-/**
- * Serialize a Fabric.js canvas to JSON string.
- * Includes custom properties we want to persist.
- */
+/*It Serialize a Fabric.js canvas to JSON string. and Includes custom properties we want to persist.*/
 export function serializeCanvas(canvas: FabricCanvas): string {
   try {
     const json = (canvas as any).toJSON?.([
@@ -24,9 +21,7 @@ export function serializeCanvas(canvas: FabricCanvas): string {
   }
 }
 
-/**
- * Load canvas state from a JSON string.
- */
+/*Load canvas state from a JSON string.*/
 export async function deserializeCanvas(
   canvas: FabricCanvas,
   jsonString: string
@@ -54,9 +49,7 @@ export async function deserializeCanvas(
   }
 }
 
-/**
- * Generate a thumbnail from the canvas as a base64 data URL.
- */
+/*It Generate a thumbnail from the canvas as a base64 data URL.*/
 export function generateThumbnail(
   canvas: FabricCanvas,
   maxWidth = 300
@@ -69,9 +62,7 @@ export function generateThumbnail(
   });
 }
 
-/**
- * Export canvas as PNG data URL.
- */
+/*Export canvas as PNG data URL.*/
 export function exportAsPNG(canvas: FabricCanvas, multiplier = 2): string {
   return canvas.toDataURL({
     format: 'png',
@@ -79,16 +70,12 @@ export function exportAsPNG(canvas: FabricCanvas, multiplier = 2): string {
   });
 }
 
-/**
- * Export canvas as SVG string.
- */
+/*It Export canvas as SVG string.*/
 export function exportAsSVG(canvas: FabricCanvas): string {
   return canvas.toSVG();
 }
 
-/**
- * Trigger a file download.
- */
+/*It Trigger a file download.*/
 export function downloadFile(
   content: string,
   filename: string,

@@ -3,9 +3,7 @@ import type { Canvas as FabricCanvas } from 'fabric';
 import { serializeCanvas, deserializeCanvas } from '../utils/canvasHelpers';
 import { MAX_HISTORY_SIZE } from '../utils/constants';
 
-/**
- * Custom hook for canvas undo/redo history management.
- */
+/* It is a Custom hook for canvas undo/redo history management.*/
 export function useCanvasHistory(canvas: FabricCanvas | null) {
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -14,9 +12,7 @@ export function useCanvasHistory(canvas: FabricCanvas | null) {
   const currentIndexRef = useRef(-1);
   const isRestoringRef = useRef(false);
 
-  /**
-   * Save the current canvas state to history.
-   */
+  /* Saveing the current canvas state to history.*/
   const saveState = useCallback(() => {
     if (!canvas || isRestoringRef.current) return;
 
@@ -26,7 +22,7 @@ export function useCanvasHistory(canvas: FabricCanvas | null) {
     // Remove any future states (from redo) when new action happens
     historyRef.current = historyRef.current.slice(0, currentIndex + 1);
 
-    // Add new state
+    // Adding new state
     historyRef.current.push(json);
 
     // Trim history if it exceeds max size
@@ -41,9 +37,7 @@ export function useCanvasHistory(canvas: FabricCanvas | null) {
     setCanRedo(false);
   }, [canvas]);
 
-  /**
-   * Undo the last action.
-   */
+  /* Undo the last action.*/
   const undo = useCallback(async () => {
     if (!canvas || currentIndexRef.current <= 0) return;
 
@@ -58,9 +52,7 @@ export function useCanvasHistory(canvas: FabricCanvas | null) {
     setCanRedo(currentIndexRef.current < historyRef.current.length - 1);
   }, [canvas]);
 
-  /**
-   * Redo the last undone action.
-   */
+  /* Redoing the last undone action.*/
   const redo = useCallback(async () => {
     if (!canvas || currentIndexRef.current >= historyRef.current.length - 1) return;
 
@@ -75,9 +67,7 @@ export function useCanvasHistory(canvas: FabricCanvas | null) {
     setCanRedo(currentIndexRef.current < historyRef.current.length - 1);
   }, [canvas]);
 
-  /**
-   * Clear history entirely (used on fresh load).
-   */
+  /* It clear history entirely (used on fresh load).*/
   const clearHistory = useCallback(() => {
     historyRef.current = [];
     currentIndexRef.current = -1;

@@ -4,7 +4,7 @@ import type { ColorPreset } from '../types/canvas';
 export const CANVAS_WIDTH = 1200;
 export const CANVAS_HEIGHT = 700;
 
-/** Zoom limits */
+/** Zoom limitations */
 export const MIN_ZOOM = 0.25;
 export const MAX_ZOOM = 4;
 export const ZOOM_STEP = 0.1;

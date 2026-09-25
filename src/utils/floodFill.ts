@@ -25,18 +25,18 @@ export function performFloodFill(
     return false;
   }
 
-  // 1. Render current canvas state into an offscreen canvas
+  // 1. Rendering current canvas state into offscreen canvas
   const offscreen = document.createElement('canvas');
   offscreen.width = CANVAS_WIDTH;
   offscreen.height = CANVAS_HEIGHT;
   const ctx = offscreen.getContext('2d', { willReadFrequently: true });
   if (!ctx) return false;
 
-  // Draw background white
+  // Background white
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-  // Draw the lower canvas element from Fabric
+  // Lower canvas element from Fabric
   const lowerCanvas = canvas.lowerCanvasEl;
   if (lowerCanvas) {
     ctx.drawImage(lowerCanvas, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -45,7 +45,7 @@ export function performFloodFill(
   const srcImageData = ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   const srcData = srcImageData.data;
 
-  // 2. Identify start color
+  // 2. Identify the starting color
   const startIndex = (startY * CANVAS_WIDTH + startX) * 4;
   const startR = srcData[startIndex];
   const startG = srcData[startIndex + 1];
@@ -54,7 +54,7 @@ export function performFloodFill(
 
   const [fillR, fillG, fillB, fillA] = hexToRgba(fillColorHex);
 
-  // Check if already same color
+  // Checking if already same color
   const isSameColor =
     Math.abs(startR - fillR) < 5 &&
     Math.abs(startG - fillG) < 5 &&
@@ -63,7 +63,7 @@ export function performFloodFill(
 
   if (isSameColor) return false;
 
-  // 3. Flood Fill using BFS queue
+  // 3. Flood Filling using BFS queue- Dsa skill used here
   const visited = new Uint8Array(CANVAS_WIDTH * CANVAS_HEIGHT);
   const queue = new Int32Array(CANVAS_WIDTH * CANVAS_HEIGHT);
   let queueHead = 0;
@@ -115,10 +115,10 @@ export function performFloodFill(
     }
   }
 
-  // If no area was filled
+  // If no area was filled then return false
   if (queueTail === 0) return false;
 
-  // 4. Create patch canvas of bounding box
+  // 4. Patch canvas of bounding box
   const patchWidth = maxX - minX + 1;
   const patchHeight = maxY - minY + 1;
 

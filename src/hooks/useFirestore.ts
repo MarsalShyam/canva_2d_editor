@@ -32,25 +32,13 @@ function withTimeout<T>(promise: Promise<T>, ms = 3000): Promise<T> {
   });
 }
 
-/**
- * Custom hook for Firestore CRUD operations on canvas documents with LocalStorage backup.
- * Follows assignment schema:
- * {
- *   name: "Untitled Canvas",
- *   data: { version: "...", objects: [...] },
- *   createdAt: timestamp,
- *   updatedAt: timestamp
- * }
- */
 export function useFirestore() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Create a new canvas document in Firestore and return its ID.
-   */
+  /* Create a new canvas document in Firestore and return its ID.*/
   const createCanvas = useCallback(
     async (canvasName = 'Untitled - Paint'): Promise<string> => {
       setError(null);
@@ -98,9 +86,7 @@ export function useFirestore() {
     []
   );
 
-  /**
-   * Save (update) an existing canvas document by ID.
-   */
+  /* Saving | updating an existing canvas document by ID.*/
   const saveCanvas = useCallback(
     async (canvasId: string, payload: { name: string; data: any }): Promise<void> => {
       try {
@@ -157,9 +143,7 @@ export function useFirestore() {
     []
   );
 
-  /**
-   * Load a canvas document by ID. Returns null if document does not exist.
-   */
+  /* Loading a canvas document by ID. Returns null if document does not exist.*/
   const loadCanvas = useCallback(
     async (canvasId: string): Promise<CanvasDocument | null> => {
       try {
