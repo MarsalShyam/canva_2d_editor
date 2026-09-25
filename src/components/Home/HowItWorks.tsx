@@ -27,7 +27,7 @@ export function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="relative isolate py-12 sm:py-16 bg-white px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center overflow-hidden rounded-tl-[150px] rounded-br-[150px]">
+    <section id="how-it-works" className="relative isolate py-12 sm:py-16 bg-white px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center overflow-hidden rounded-tl-[200px] rounded-br-[200px]">
       {/* 2-Color Top-to-Bottom Gradient Background */}
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-500/10 via-indigo-500/5 to-purple-500/10 pointer-events-none" />
 

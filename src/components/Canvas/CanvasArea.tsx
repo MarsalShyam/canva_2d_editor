@@ -23,6 +23,7 @@ import { performFloodFill } from '../../utils/floodFill';
 
 interface CanvasAreaProps {
   activeTool: ToolType;
+  onToolChange: (tool: ToolType) => void;
   zoom: number;
   showGrid: boolean;
   color1: string; // Stroke / Pen / Text
@@ -39,6 +40,7 @@ interface CanvasAreaProps {
 
 export function CanvasArea({
   activeTool,
+  onToolChange,
   zoom,
   showGrid,
   color1,
@@ -55,6 +57,25 @@ export function CanvasArea({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<FabricCanvas | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const whiteContainerRef = useRef<HTMLDivElement>(null);
+
+  // Request 2: Click outside the white canvas container deselects tool/shape & resets to 'select'
+  const handleOuterMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (whiteContainerRef.current && !whiteContainerRef.current.contains(e.target as Node)) {
+      if (activeTool !== 'select') {
+        onToolChange('select');
+      }
+      if (fabricRef.current) {
+        const activeObj = fabricRef.current.getActiveObject() as any;
+        if (activeObj && typeof activeObj.exitEditing === 'function' && activeObj.isEditing) {
+          activeObj.exitEditing();
+        }
+        fabricRef.current.discardActiveObject();
+        fabricRef.current.renderAll();
+        onSelectionChange(null);
+      }
+    }
+  };
 
   // Drag-to-create shape tracking
   const isDrawingShapeRef = useRef(false);
@@ -351,8 +372,63 @@ export function CanvasArea({
         return;
       }
 
-      // Handle Text tool: single click adds Textbox and enters editing
+      // Handle Text tool: single click adds Textbox or focuses existing text area (Request 3)
       if (currentTool === 'text') {
+        const activeObj = canvas.getActiveObject() as any;
+        const target = (opt.target || canvas.findTarget(opt.e)) as any;
+
+        const isTargetText =
+          target &&
+          (target.type === 'textbox' ||
+            target.type === 'i-text' ||
+            target.type === 'text');
+
+        const isActiveText =
+          activeObj &&
+          (activeObj.type === 'textbox' ||
+            activeObj.type === 'i-text' ||
+            activeObj.type === 'text');
+
+        // Check if click was inside active text object bounds
+        let isInsideActiveText = false;
+        if (isActiveText) {
+          if (target === activeObj) {
+            isInsideActiveText = true;
+          } else if (typeof activeObj.containsPoint === 'function') {
+            isInsideActiveText = activeObj.containsPoint(pointer);
+          } else if (activeObj.getBoundingRect) {
+            const rect = activeObj.getBoundingRect();
+            isInsideActiveText =
+              pointer.x >= rect.left &&
+              pointer.x <= rect.left + rect.width &&
+              pointer.y >= rect.top &&
+              pointer.y <= rect.top + rect.height;
+          }
+        }
+
+        // If clicking inside an open or selected text area, keep focus on it without creating a new area
+        if (isTargetText || isInsideActiveText) {
+          const textToFocus = isTargetText ? target : activeObj;
+
+          if (canvas.getActiveObject() !== textToFocus) {
+            canvas.setActiveObject(textToFocus);
+          }
+
+          if (typeof textToFocus.enterEditing === 'function' && !textToFocus.isEditing) {
+            textToFocus.enterEditing();
+          }
+
+          canvas.renderAll();
+          onSelectionChange(textToFocus);
+          return;
+        }
+
+        // Clicking outside existing text area: exit editing on previous text if needed
+        if (isActiveText && typeof activeObj.exitEditing === 'function' && activeObj.isEditing) {
+          activeObj.exitEditing();
+        }
+
+        // Create new text area as usual
         const textObj = new Textbox('Type here...', {
           left: pointer.x,
           top: pointer.y,
@@ -542,6 +618,10 @@ export function CanvasArea({
       canvas.selection = false;
       canvas.defaultCursor = 'cell';
       canvas.hoverCursor = 'cell';
+    } else if (activeTool === 'text') {
+      canvas.selection = false;
+      canvas.defaultCursor = 'text';
+      canvas.hoverCursor = 'text';
     } else if (activeTool !== 'select') {
       canvas.selection = false;
       canvas.defaultCursor = 'crosshair';
@@ -590,50 +670,23 @@ export function CanvasArea({
     return () => container.removeEventListener('wheel', handleWheel);
   }, [zoom, onZoomChange]);
 
-  // Draw or clear Grid Lines on canvas
+  // Clean up any old Fabric line grid objects that may have been in canvas
   useEffect(() => {
     const canvas = fabricRef.current;
     if (!canvas) return;
 
     const gridObjects = canvas.getObjects().filter((o: any) => o.data?.isGrid);
-    gridObjects.forEach((o) => canvas.remove(o));
-
-    if (showGrid) {
-      const gridSize = 40;
-      const gridColor = 'rgba(0, 0, 0, 0.07)';
-
-      for (let i = 0; i <= CANVAS_WIDTH; i += gridSize) {
-        const line = new Line([i, 0, i, CANVAS_HEIGHT], {
-          stroke: gridColor,
-          strokeWidth: 1,
-          selectable: false,
-          evented: false,
-          data: { isGrid: true },
-        });
-        canvas.add(line);
-        canvas.sendObjectToBack(line);
-      }
-
-      for (let i = 0; i <= CANVAS_HEIGHT; i += gridSize) {
-        const line = new Line([0, i, CANVAS_WIDTH, i], {
-          stroke: gridColor,
-          strokeWidth: 1,
-          selectable: false,
-          evented: false,
-          data: { isGrid: true },
-        });
-        canvas.add(line);
-        canvas.sendObjectToBack(line);
-      }
+    if (gridObjects.length > 0) {
+      gridObjects.forEach((o) => canvas.remove(o));
+      canvas.renderAll();
     }
-
-    canvas.renderAll();
-  }, [showGrid]);
+  }, []);
 
   return (
     <div
       ref={containerRef}
       className="flex-1 overflow-auto relative bg-[#18181b] flex items-center justify-center p-8 select-none"
+      onMouseDown={handleOuterMouseDown}
       onMouseLeave={() => onMouseMoveCoords(null)}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
@@ -646,6 +699,7 @@ export function CanvasArea({
     >
       {/* MS Paint Logical White Canvas Container (1200 × 700) */}
       <div
+        ref={whiteContainerRef}
         className="relative shadow-2xl bg-white rounded-none border border-[#444444] transition-shadow hover:shadow-[0_0_30px_rgba(0,0,0,0.5)]"
         style={{
           width: CANVAS_WIDTH * zoom,
@@ -653,6 +707,20 @@ export function CanvasArea({
         }}
       >
         <canvas ref={canvasRef} id="fabric-paint-canvas" />
+
+        {/* Visual Grid Lines Overlay (Request 4) */}
+        {showGrid && (
+          <div
+            className="absolute inset-0 pointer-events-none z-10"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(0, 0, 0, 0.12) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 1px, transparent 1px)
+              `,
+              backgroundSize: `${40 * zoom}px ${40 * zoom}px`,
+            }}
+          />
+        )}
 
         {/* Small corner resize indicator dots just like Windows Paint */}
         <div className="absolute -top-1 -left-1 w-2 h-2 bg-white border border-gray-600 pointer-events-none" />

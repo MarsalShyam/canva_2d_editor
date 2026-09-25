@@ -362,6 +362,20 @@ export function CanvasEditor() {
     [canvas, canvasTitle]
   );
 
+  // Handle tool change with toggle-to-select behavior (Request 1)
+  const handleToolChange = useCallback((tool: ToolType) => {
+    setActiveTool((prev) => (tool !== 'select' && prev === tool ? 'select' : tool));
+  }, []);
+
+  // Toggle grid with user feedback toast (Request 4)
+  const handleToggleGrid = useCallback(() => {
+    setShowGrid((prev) => {
+      const next = !prev;
+      showToast('info', next ? 'Grid lines enabled' : 'Grid lines disabled');
+      return next;
+    });
+  }, []);
+
   // Keyboard Shortcuts (Delete, Undo, Redo, Save, Tools)
   useKeyboardShortcuts({
     canvas,
@@ -375,7 +389,7 @@ export function CanvasEditor() {
     onZoomIn: handleZoomIn,
     onZoomOut: handleZoomOut,
     onZoomReset: handleZoomReset,
-    setActiveTool,
+    setActiveTool: handleToolChange,
   });
 
   // Not Found State Screen (Section 10 Requirement)
@@ -409,7 +423,7 @@ export function CanvasEditor() {
         canvasTitle={canvasTitle}
         onTitleChange={setCanvasTitle}
         activeTool={activeTool}
-        onToolChange={setActiveTool}
+        onToolChange={handleToolChange}
         color1={color1}
         color2={color2}
         activeColorSlot={activeColorSlot}
@@ -431,7 +445,7 @@ export function CanvasEditor() {
         onDeleteSelected={handleDelete}
         onExport={handleExport}
         showGrid={showGrid}
-        onToggleGrid={() => setShowGrid(!showGrid)}
+        onToggleGrid={handleToggleGrid}
         onAddImage={handleAddImage}
       />
 
@@ -448,6 +462,7 @@ export function CanvasEditor() {
       <div className="flex-1 flex overflow-hidden relative">
         <CanvasArea
           activeTool={activeTool}
+          onToolChange={handleToolChange}
           zoom={zoom}
           showGrid={showGrid}
           color1={color1}
