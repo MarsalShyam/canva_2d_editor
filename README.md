@@ -1,4 +1,4 @@
-# PaintFlow 2D — Web-Based MS Paint–Style Canvas Editor
+# ChullDraw 2D — Web-Based 2D Canvas style Editor
 
 A complete, responsive, web-based 2D canvas editor built with **React**, **Fabric.js**, **Firebase Firestore**, and **Tailwind CSS**. Inspired by the clean workspace experience of **Windows 11 MS Paint** and **Canva**.
 
@@ -24,7 +24,7 @@ A complete, responsive, web-based 2D canvas editor built with **React**, **Fabri
 
 ## 🎨 Project Overview
 
-PaintFlow 2D provides a lightweight yet powerful in-browser drawing and vector manipulation workspace. Users can start a new drawing with a single click, design with shapes, pencil brush, and text, manipulate objects on canvas, and persist their work directly to Firebase Firestore with seamless URL-based reload and sharing (`/canvas/:canvasId`).
+ChullDraw 2D provides a lightweight yet powerful in-browser drawing and vector manipulation workspace. Users can start a new drawing with a single click, design with shapes, pencil brush, and text, manipulate objects on canvas, and persist their work directly to Firebase Firestore with seamless URL-based reload and sharing (`/canvas/:canvasId`).
 
 ---
 

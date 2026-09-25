@@ -26,8 +26,8 @@ interface CanvasAreaProps {
   onToolChange: (tool: ToolType) => void;
   zoom: number;
   showGrid: boolean;
-  color1: string; // Stroke / Pen / Text
-  color2: string; // Fill
+  color1: string; // for Stroke / Pen / Text
+  color2: string; // for Fill
   strokeWidth: number;
   fillEnabled: boolean;
   onCanvasReady: (canvas: FabricCanvas) => void;
@@ -59,7 +59,7 @@ export function CanvasArea({
   const containerRef = useRef<HTMLDivElement>(null);
   const whiteContainerRef = useRef<HTMLDivElement>(null);
 
-  // Request 2: Click outside the white canvas container deselects tool/shape & resets to 'select'
+  // function for Clicking outside the white canvas container deselects tool/shape & resets to 'select'
   const handleOuterMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if (whiteContainerRef.current && !whiteContainerRef.current.contains(e.target as Node)) {
       if (activeTool !== 'select') {
@@ -77,7 +77,7 @@ export function CanvasArea({
     }
   };
 
-  // Drag-to-create shape tracking
+  // variables for Drag-to-create shape tracking
   const isDrawingShapeRef = useRef(false);
   const shapeOriginRef = useRef<{ x: number; y: number } | null>(null);
   const activeShapeRef = useRef<FabricObject | null>(null);
@@ -98,7 +98,7 @@ export function CanvasArea({
     fillEnabled,
   };
 
-  // Helper to construct custom shapes (Star, Cloud, Heart, Arrows, Diamond)
+  // Helper to construct custom shapes (Star, Cloud, Heart, Arrows, Diamond) etc.
   const isCustomShape = (tool: string) =>
     [
       'star',
@@ -341,7 +341,7 @@ export function CanvasArea({
       onObjectModified();
     });
 
-    // 2. Mouse down handler for drag-to-create, fill, & text creation
+    // Function for Mouse down handler for drag-to-create, fill, & text creation
     canvas.on('mouse:down', (opt) => {
       const currentTool = propsRef.current.activeTool;
       if (currentTool === 'select' || currentTool === 'pen' || currentTool === 'eraser') return;
@@ -372,7 +372,7 @@ export function CanvasArea({
         return;
       }
 
-      // Handle Text tool: single click adds Textbox or focuses existing text area (Request 3)
+      // Handle Text tool=> single click adds Textbox or focuses existing text area
       if (currentTool === 'text') {
         const activeObj = canvas.getActiveObject() as any;
         const target = (opt.target || canvas.findTarget(opt.e)) as any;
@@ -428,7 +428,7 @@ export function CanvasArea({
           activeObj.exitEditing();
         }
 
-        // Create new text area as usual
+        // Creating new text area here
         const textObj = new Textbox('Type here...', {
           left: pointer.x,
           top: pointer.y,
@@ -449,7 +449,7 @@ export function CanvasArea({
         return;
       }
 
-      // Start drag-to-create shape
+      // It help to Start drag-to-create shape
       isDrawingShapeRef.current = true;
       shapeOriginRef.current = { x: pointer.x, y: pointer.y };
 
@@ -511,7 +511,7 @@ export function CanvasArea({
       }
     });
 
-    // 3. Mouse move handler for live drag preview & coordinate tracking
+    //Mouse move handler for live drag preview & coordinate tracking
     canvas.on('mouse:move', (opt) => {
       const pointer = canvas.getScenePoint(opt.e);
       onMouseMoveCoords({ x: Math.round(pointer.x), y: Math.round(pointer.y) });
@@ -569,7 +569,7 @@ export function CanvasArea({
       canvas.renderAll();
     });
 
-    // 4. Mouse up handler (finalize shape creation without deselecting tool)
+    //Mouse up handler (finalize shape creation without deselecting tool)
     canvas.on('mouse:up', () => {
       if (isDrawingShapeRef.current && activeShapeRef.current) {
         isDrawingShapeRef.current = false;
