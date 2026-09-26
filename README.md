@@ -22,11 +22,11 @@ A complete, responsive, web-based 2D canvas editor built with **React**, **Fabri
 
 ---
 
-## 🖼️ Workspace Screenshot
+<!-- ## 🖼️ Workspace Screenshot
 
 <p align="center">
   <img src="./public/screenshot.png" alt="ChullDraw 2D Workspace" width="100%" style="max-width: 850px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" />
-</p>
+</p> -->
 
 ---
 
