@@ -20,6 +20,7 @@ import {
   ZOOM_STEP,
 } from '../../utils/constants';
 import { performFloodFill } from '../../utils/floodFill';
+import { syncCanvasInteractivity } from '../../utils/canvasHelpers';
 
 interface CanvasAreaProps {
   activeTool: ToolType;
@@ -82,13 +83,16 @@ export function CanvasArea({
   const shapeOriginRef = useRef<{ x: number; y: number } | null>(null);
   const activeShapeRef = useRef<FabricObject | null>(null);
 
-  // References for current tool & color settings
+  // References for current tool, color settings & callbacks
   const propsRef = useRef({
     activeTool,
     color1,
     color2,
     strokeWidth,
     fillEnabled,
+    onObjectModified,
+    onSelectionChange,
+    onToolChange,
   });
   propsRef.current = {
     activeTool,
@@ -96,6 +100,9 @@ export function CanvasArea({
     color2,
     strokeWidth,
     fillEnabled,
+    onObjectModified,
+    onSelectionChange,
+    onToolChange,
   };
 
   // Helper to construct custom shapes (Star, Cloud, Heart, Arrows, Diamond) etc.
@@ -322,23 +329,41 @@ export function CanvasArea({
 
     // Selection listeners
     canvas.on('selection:created', (e) => {
-      onSelectionChange(e.selected?.[0] || null);
+      propsRef.current.onSelectionChange?.(e.selected?.[0] || null);
     });
     canvas.on('selection:updated', (e) => {
-      onSelectionChange(e.selected?.[0] || null);
+      propsRef.current.onSelectionChange?.(e.selected?.[0] || null);
     });
     canvas.on('selection:cleared', () => {
-      onSelectionChange(null);
+      if (propsRef.current.activeTool !== 'select') {
+        syncCanvasInteractivity(canvas, propsRef.current.activeTool);
+      }
+      propsRef.current.onSelectionChange?.(null);
     });
 
     // Object modification listener (for undo/redo & persistence)
     canvas.on('object:modified', () => {
-      onObjectModified();
+      propsRef.current.onObjectModified?.();
     });
 
     // Path created listener (Pen tool freehand drawing finished)
-    canvas.on('path:created', () => {
-      onObjectModified();
+    canvas.on('path:created', (opt: any) => {
+      const path = opt?.path;
+      if (path && propsRef.current.activeTool === 'pen') {
+        path.set({
+          selectable: true,
+          evented: true,
+        });
+        canvas.setActiveObject(path);
+        canvas.renderAll();
+        propsRef.current.onSelectionChange?.(path);
+      }
+      propsRef.current.onObjectModified?.();
+    });
+
+    // Text editing exited listener (record final text edit in history)
+    canvas.on('text:editing:exited', () => {
+      propsRef.current.onObjectModified?.();
     });
 
     // Function for Mouse down handler for drag-to-create, fill, & text creation
@@ -360,14 +385,14 @@ export function CanvasArea({
         if (target && !(target as any).data?.isGrid && (target as any).set) {
           (target as any).set('fill', activeFillColor);
           canvas.renderAll();
-          onObjectModified();
+          propsRef.current.onObjectModified?.();
           return;
         }
 
         // Run pixel-level flood fill for enclosed pencil/line areas
         const filled = performFloodFill(canvas, pointer.x, pointer.y, activeFillColor);
         if (filled) {
-          onObjectModified();
+          propsRef.current.onObjectModified?.();
         }
         return;
       }
@@ -419,7 +444,7 @@ export function CanvasArea({
           }
 
           canvas.renderAll();
-          onSelectionChange(textToFocus);
+          propsRef.current.onSelectionChange?.(textToFocus);
           return;
         }
 
@@ -437,6 +462,8 @@ export function CanvasArea({
           fill: color1,
           width: 220,
           editable: true,
+          selectable: true,
+          evented: true,
         });
 
         canvas.add(textObj);
@@ -444,9 +471,21 @@ export function CanvasArea({
         textObj.enterEditing();
         textObj.selectAll();
         canvas.renderAll();
-        onObjectModified();
-        onSelectionChange(textObj);
+        propsRef.current.onObjectModified?.();
+        propsRef.current.onSelectionChange?.(textObj);
         return;
+      }
+
+      // If an existing object was active, deselect it before creating a new shape
+      const activeObj = canvas.getActiveObject();
+      if (activeObj) {
+        if (typeof (activeObj as any).exitEditing === 'function' && (activeObj as any).isEditing) {
+          (activeObj as any).exitEditing();
+        }
+        activeObj.set({ selectable: false, evented: false });
+        canvas.discardActiveObject();
+        canvas.renderAll();
+        propsRef.current.onSelectionChange?.(null);
       }
 
       // It help to Start drag-to-create shape
@@ -572,14 +611,41 @@ export function CanvasArea({
     //Mouse up handler (finalize shape creation without deselecting tool)
     canvas.on('mouse:up', () => {
       if (isDrawingShapeRef.current && activeShapeRef.current) {
+        const shape = activeShapeRef.current;
         isDrawingShapeRef.current = false;
         shapeOriginRef.current = null;
         activeShapeRef.current = null;
 
-        // Keep current tool active (do not force 'select') so user can draw multiple shapes
-        canvas.discardActiveObject();
+        const currentTool = propsRef.current.activeTool;
+        let isTiny = false;
+        if (currentTool === 'circle') {
+          isTiny = ((shape as any).radius || 0) < 4;
+        } else if (currentTool === 'line') {
+          const l = shape as any;
+          isTiny = Math.hypot((l.x2 || 0) - (l.x1 || 0), (l.y2 || 0) - (l.y1 || 0)) < 4;
+        } else {
+          isTiny =
+            Math.abs((shape as any).width || 0) < 4 &&
+            Math.abs((shape as any).height || 0) < 4;
+        }
+
+        if (isTiny) {
+          canvas.remove(shape);
+          canvas.discardActiveObject();
+          canvas.renderAll();
+          propsRef.current.onSelectionChange?.(null);
+          return;
+        }
+
+        // Auto-select newly created shape
+        shape.set({
+          selectable: true,
+          evented: true,
+        });
+        canvas.setActiveObject(shape);
         canvas.renderAll();
-        onObjectModified();
+        propsRef.current.onSelectionChange?.(shape);
+        propsRef.current.onObjectModified?.();
       }
     });
 
@@ -596,7 +662,7 @@ export function CanvasArea({
     if (!canvas) return;
 
     canvas.isDrawingMode = false;
-    canvas.selection = true;
+    canvas.selection = activeTool === 'select';
     canvas.defaultCursor = 'default';
     canvas.hoverCursor = 'move';
 
@@ -607,6 +673,7 @@ export function CanvasArea({
       brush.width = strokeWidth;
       canvas.freeDrawingBrush = brush;
       canvas.defaultCursor = 'crosshair';
+      canvas.hoverCursor = 'crosshair';
     } else if (activeTool === 'eraser') {
       canvas.isDrawingMode = true;
       const brush = new PencilBrush(canvas);
@@ -614,6 +681,7 @@ export function CanvasArea({
       brush.width = Math.max(16, strokeWidth * 3);
       canvas.freeDrawingBrush = brush;
       canvas.defaultCursor = 'crosshair';
+      canvas.hoverCursor = 'crosshair';
     } else if (activeTool === 'fill') {
       canvas.selection = false;
       canvas.defaultCursor = 'cell';
@@ -627,6 +695,20 @@ export function CanvasArea({
       canvas.defaultCursor = 'crosshair';
       canvas.hoverCursor = 'crosshair';
     }
+
+    if (activeTool !== 'select') {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj) {
+        if (typeof (activeObj as any).exitEditing === 'function' && (activeObj as any).isEditing) {
+          (activeObj as any).exitEditing();
+        }
+        canvas.discardActiveObject();
+        propsRef.current.onSelectionChange?.(null);
+      }
+    }
+
+    syncCanvasInteractivity(canvas, activeTool);
+    canvas.renderAll();
   }, [activeTool, color1, strokeWidth]);
 
   // Update brush when color1 or strokeWidth changes

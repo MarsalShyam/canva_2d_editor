@@ -75,7 +75,7 @@ export function ContextualPropertyBar({
     setStroke(obj.stroke || '#000000');
     setStrokeWidth(obj.strokeWidth || 0);
     setOpacity(obj.opacity ?? 1);
-    setIsLocked(!obj.selectable);
+    setIsLocked(Boolean(obj.locked || obj.data?.locked || !obj.selectable));
 
     if (isImage) {
       setBrightness(obj.data?.brightness || 0);
@@ -188,6 +188,9 @@ export function ContextualPropertyBar({
   const handleToggleLock = () => {
     if (!selectedObject || !canvas) return;
     const locked = !isLocked;
+    (selectedObject as any).locked = locked;
+    if (!(selectedObject as any).data) (selectedObject as any).data = {};
+    (selectedObject as any).data.locked = locked;
     (selectedObject as any).set({
       selectable: !locked,
       evented: !locked,
@@ -196,9 +199,12 @@ export function ContextualPropertyBar({
       lockRotation: locked,
       lockScalingX: locked,
       lockScalingY: locked,
+      hasControls: !locked,
+      editable: !locked,
     });
     setIsLocked(locked);
     canvas.renderAll();
+    onSaveState();
   };
 
   const handleResetAngle = () => {
@@ -268,9 +274,8 @@ export function ContextualPropertyBar({
                   setIsBold(next);
                   updateProp('fontWeight', next ? 'bold' : 'normal');
                 }}
-                className={`p-1 rounded hover:bg-[#333333] transition-colors ${
-                  isBold ? 'bg-blue-600/30 text-blue-400 font-bold' : 'text-gray-300'
-                }`}
+                className={`p-1 rounded hover:bg-[#333333] transition-colors ${isBold ? 'bg-blue-600/30 text-blue-400 font-bold' : 'text-gray-300'
+                  }`}
                 title="Bold"
               >
                 <Bold className="w-3.5 h-3.5" />
@@ -281,9 +286,8 @@ export function ContextualPropertyBar({
                   setIsItalic(next);
                   updateProp('fontStyle', next ? 'italic' : 'normal');
                 }}
-                className={`p-1 rounded hover:bg-[#333333] transition-colors ${
-                  isItalic ? 'bg-blue-600/30 text-blue-400' : 'text-gray-300'
-                }`}
+                className={`p-1 rounded hover:bg-[#333333] transition-colors ${isItalic ? 'bg-blue-600/30 text-blue-400' : 'text-gray-300'
+                  }`}
                 title="Italic"
               >
                 <Italic className="w-3.5 h-3.5" />
@@ -301,9 +305,8 @@ export function ContextualPropertyBar({
                       setTextAlign(align);
                       updateProp('textAlign', align);
                     }}
-                    className={`p-1 rounded hover:bg-[#333333] transition-colors ${
-                      textAlign === align ? 'bg-blue-600/30 text-blue-400' : 'text-gray-300'
-                    }`}
+                    className={`p-1 rounded hover:bg-[#333333] transition-colors ${textAlign === align ? 'bg-blue-600/30 text-blue-400' : 'text-gray-300'
+                      }`}
                     title={`Align ${align}`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -450,11 +453,10 @@ export function ContextualPropertyBar({
                     setFill('transparent');
                     updateProp('fill', 'transparent');
                   }}
-                  className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${
-                    fill === 'transparent'
+                  className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${fill === 'transparent'
                       ? 'bg-blue-600/30 border-blue-500 text-blue-300'
                       : 'border-[#3e3e3e] text-gray-400 hover:bg-[#333333]'
-                  }`}
+                    }`}
                   title="No fill (transparent)"
                 >
                   None
@@ -566,9 +568,8 @@ export function ContextualPropertyBar({
 
         <button
           onClick={handleToggleLock}
-          className={`p-1.5 rounded hover:bg-[#333333] transition-colors ${
-            isLocked ? 'text-amber-400 bg-amber-950/30' : 'text-gray-300 hover:text-white'
-          }`}
+          className={`p-1.5 rounded hover:bg-[#333333] transition-colors ${isLocked ? 'text-amber-400 bg-amber-950/30' : 'text-gray-300 hover:text-white'
+            }`}
           title={isLocked ? 'Unlock Object' : 'Lock Object'}
         >
           {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}

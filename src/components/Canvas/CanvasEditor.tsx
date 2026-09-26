@@ -19,6 +19,7 @@ import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import {
   serializeCanvas,
   deserializeCanvas,
+  syncCanvasInteractivity,
   exportAsPNG,
   exportAsSVG,
   downloadFile,
@@ -110,6 +111,9 @@ export function CanvasEditor() {
         setIsNotFound(true);
       } finally {
         setIsLoadingCanvas(false);
+        if (canvas) {
+          syncCanvasInteractivity(canvas, activeTool);
+        }
         clearHistory();
         saveState();
         updateObjectCount();
@@ -118,7 +122,28 @@ export function CanvasEditor() {
     };
 
     load();
-  }, [canvas, canvasId, loadCanvas, clearHistory, saveState, updateObjectCount]);
+  }, [canvas, canvasId, loadCanvas, clearHistory, saveState, updateObjectCount, activeTool]);
+
+  // Undo / Redo handlers that re-sync interactivity and update count
+  const handleUndo = useCallback(async () => {
+    await undo();
+    if (canvas) {
+      syncCanvasInteractivity(canvas, activeTool);
+    }
+    updateObjectCount();
+    setSelectedObject(null);
+    setHasUnsavedChanges(true);
+  }, [undo, canvas, activeTool, updateObjectCount]);
+
+  const handleRedo = useCallback(async () => {
+    await redo();
+    if (canvas) {
+      syncCanvasInteractivity(canvas, activeTool);
+    }
+    updateObjectCount();
+    setSelectedObject(null);
+    setHasUnsavedChanges(true);
+  }, [redo, canvas, activeTool, updateObjectCount]);
 
   // Save Canvas handler
   const handleSave = useCallback(async () => {
@@ -280,6 +305,7 @@ export function CanvasEditor() {
       cloned.set({
         left: (cloned.left || 0) + 25,
         top: (cloned.top || 0) + 25,
+        selectable: true,
         evented: true,
       });
       canvas.add(cloned);
@@ -297,9 +323,12 @@ export function CanvasEditor() {
     if (!activeObject) return;
 
     activeObject.clone().then((cloned: FabricObject) => {
+      canvas.discardActiveObject();
       cloned.set({
         left: (cloned.left || 0) + 25,
         top: (cloned.top || 0) + 25,
+        selectable: true,
+        evented: true,
       });
       canvas.add(cloned);
       canvas.setActiveObject(cloned);
@@ -311,7 +340,7 @@ export function CanvasEditor() {
   // Select all objects
   const handleSelectAll = useCallback(() => {
     if (!canvas) return;
-    const objects = canvas.getObjects().filter((o: any) => !o.data?.isGrid && o.selectable !== false);
+    const objects = canvas.getObjects().filter((o: any) => !o.data?.isGrid && o.selectable !== false && !o.locked);
     if (objects.length === 0) return;
 
     canvas.discardActiveObject();
@@ -380,8 +409,8 @@ export function CanvasEditor() {
   useKeyboardShortcuts({
     canvas,
     onSave: handleSave,
-    onUndo: undo,
-    onRedo: redo,
+    onUndo: handleUndo,
+    onRedo: handleRedo,
     onDelete: handleDelete,
     onCopy: handleCopy,
     onPaste: handlePaste,
@@ -435,8 +464,8 @@ export function CanvasEditor() {
         onToggleFill={setFillEnabled}
         canUndo={canUndo}
         canRedo={canRedo}
-        onUndo={undo}
-        onRedo={redo}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
         isSaving={isSaving}
         hasUnsavedChanges={hasUnsavedChanges}
         lastSaved={lastSaved}
