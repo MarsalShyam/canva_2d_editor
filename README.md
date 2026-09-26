@@ -4,21 +4,29 @@ A complete, responsive, web-based 2D canvas editor built with **React**, **Fabri
 
 ---
 
-## 🎬 Product Demo
+## 🎬 Product Demo & Video Walkthrough
 
-> **Add your screen recording or GIF here**
->
-> Replace this section with a link or embedded video/gif of the product in action.
->
-> Example: `![Demo](./public/demo.gif)`
+> **Creating Canva Designs & Exporting Workflows** — A complete video walkthrough covering drawing tools, object manipulation, Firestore cloud persistence, layer reordering, and export options.
+
+<p align="center">
+  <a href="https://www.loom.com/share/7a5ea0641feb487589a5f3dc02ab563b" target="_blank" rel="noopener noreferrer">
+    <img src="./public/screenshot.png" alt="ChullDraw 2D Video Demo on Loom" width="100%" style="max-width: 850px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://www.loom.com/share/7a5ea0641feb487589a5f3dc02ab563b" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/▶%20Watch%20Walkthrough-Loom-625DF5?style=for-the-badge&logo=loom&logoColor=white" alt="Watch on Loom" />
+  </a>
+</p>
 
 ---
 
 ## 🖼️ Workspace Screenshot
 
-> **Add a screenshot of the editor here**
->
-> Example: `![Editor Workspace](./public/screenshot.png)`
+<p align="center">
+  <img src="./public/screenshot.png" alt="ChullDraw 2D Workspace" width="100%" style="max-width: 850px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" />
+</p>
 
 ---
 
@@ -47,39 +55,54 @@ ChullDraw 2D provides a lightweight yet powerful in-browser drawing and vector m
 - **Click-to-Focus**: Clicking inside an already-selected textbox focuses it for inline editing instead of creating a new one.
 - **Rich Text Properties**: Font family dropdown, font size controls, bold, italic, alignment (left/center/right), and text color.
 
-### 4. Interactive Object Transformations
-- **Selection & Multi-selection**: Select individual objects or drag-box select multiple objects.
+### 4. Interactive Object Transformations & Persistent Locking
+- **Selection & Multi-selection**: Select individual objects or drag-box select multiple objects in Select mode.
 - **Manipulations**: Move, scale, rotate with interactive control handles, flip horizontally/vertically, and layer reordering (Bring to Front, Send to Back).
-- **Lock/Unlock**: Prevent accidental movement of finished layers.
+- **Persistent Object Locking**: Lock objects to prevent unintended movement, resizing, rotation, or editing.
+  - **Full Persistence**: Lock state persists across page refreshes, URL reloads (`/canvas/:canvasId`), Firestore saves/loads, and undo/redo operations.
+  - **Interaction Protection**: Locked objects remain completely non-selectable, non-movable, non-rotatable, and non-editable, and cannot interfere when drawing new shapes directly over them.
+  - **Select-All Exclusion**: `Ctrl+A` automatically excludes locked objects.
 
-### 5. MS Paint Palette & Color System
+### 5. Tool-Mode Selection & Auto-Selection Architecture
+- **Exclusive Creation Tool Priority**: Only the **Select** tool allows selecting existing objects through pointer interaction. While any creation tool (Shapes, Pencil, Text, Eraser, Fill) is active, existing objects never auto-select, move, or intercept clicks when drawn over.
+- **Immediate Auto-Selection for All New Objects**: Creating *any* new object (Rectangles, Circles, Polygons/Stars, Text, Freehand Pen strokes, Images, or Pasted/Duplicated items) immediately selects it as the active object with visible Fabric.js controls, allowing instant resizing, moving, styling, or deletion.
+- **Smart Click-Outside Deselection**: Clicking outside a newly created object immediately deselects it. In creation mode, the object becomes non-interactive so subsequent drawing operations are never obstructed.
+
+### 6. MS Paint Palette & Color System
 - **Dual Color System**: **Color 1** (Foreground / Stroke / Pen / Text) and **Color 2** (Background / Shape Fill).
 - **2-Row 20-Color Classic Palette**: Instant one-click selection of standard MS Paint colors.
 - **Custom Color Wheel Picker**: Support for any HEX / RGB color.
 
-### 6. Workspace UX Refinements
+### 7. Workspace UX Refinements
 - **Tool Toggle**: Clicking an already-active tool button deselects it and returns to the Select tool.
 - **Background Click**: Clicking outside the white canvas workspace deselects any active tool and object selection.
 - **CSS Grid Overlay**: Grid lines are rendered as a lightweight CSS background — zero Fabric.js object overhead.
 
-### 7. Persistence & Firebase Firestore
+### 8. Persistence & Firebase Firestore
 - **URL-based Canvas Loading**: Every canvas has a unique ID (`/canvas/:canvasId`).
 - **Save Status UX**: Visual indicators for `✓ Saved`, `● Unsaved changes`, and `Saving...`.
 - **Reliable Fallback**: Firestore timeout handling with localStorage caching so work is never lost.
 - **Graceful 404 Screen**: If a canvas ID is invalid or not found, a friendly "Canvas not found" screen with a "[Go Home]" button is displayed.
 
-### 8. History & Undo/Redo
-- **State Tracking**: Automatically tracks object additions, modifications, resizing, deletions, and brush strokes.
-- **Undo / Redo Stack**: Works with keyboard shortcuts (`Ctrl+Z`, `Ctrl+Y`) and ribbon buttons (up to 50 steps).
-- **Clear Canvas Dialog**: Safe confirmation modal before wiping the canvas.
+### 9. Step-by-Step History & Undo/Redo
+- **Deterministic Step-by-Step History**: Every meaningful canvas operation creates exactly one history state:
+  - Object creation (shapes, pen drawings, text, images, pastes, duplicates)
+  - Transformations (move, resize, rotate upon mouse release)
+  - Text editing (committed on editing exit)
+  - Color, stroke width, and property adjustments
+  - Lock / unlock state toggles
+  - Deletions and canvas clears
+- **No Drag/Movement Spam**: State snapshots are only recorded once upon completion of an action, preventing noisy intermediate states.
+- **Deduplication & Branch Clearing**: Consecutive duplicate states are discarded. Making a new edit after undoing properly truncates future redo states.
+- **Platform Shortcuts & Sync**: Full support for `Ctrl+Z` / `Ctrl+Y` on Windows/Linux and `Cmd+Z` / `Cmd+Shift+Z` on macOS, staying in sync with ribbon toolbar buttons.
 
-### 9. Export & Workspace Controls
+### 10. Export & Workspace Controls
 - **Export Formats**: Download as **PNG** (2× retina), **SVG vector**, or **Fabric JSON**.
 - **Zoom System**: Live zoom slider and buttons (25% to 400%), plus fit-to-screen (`100%`).
 - **Live Coordinates**: Cursor position tracker (`X, Y px`) and object counter on the bottom status bar.
 
-### 10. Image Editing
-- **Image Upload**: Insert images from local disk directly onto the canvas.
+### 11. Image Editing
+- **Image Upload**: Insert images from local disk directly onto the canvas with automatic scaling and active selection.
 - **Filter Presets**: Grayscale, Sepia, Invert, Vintage, Black & White.
 - **Adjustments**: Brightness, Contrast, Blur sliders with per-image persistence.
 
@@ -140,7 +163,7 @@ src/
 │   └── canvas.ts                     # TypeScript types: ToolType, CanvasDocument, etc.
 │
 ├── utils/
-│   ├── canvasHelpers.ts              # Canvas serialize/deserialize, PNG/SVG export
+│   ├── canvasHelpers.ts              # Canvas serialize/deserialize, lock persistence, syncCanvasInteractivity, PNG/SVG export
 │   ├── constants.ts                  # Canvas dimensions, palette colors, font list
 │   └── floodFill.ts                  # BFS flood-fill algorithm for the fill tool
 │
@@ -178,7 +201,10 @@ Example saved Firestore document:
         "height": 200,
         "fill": "#22C55E",
         "stroke": "#000000",
-        "strokeWidth": 2
+        "strokeWidth": 2,
+        "locked": false,
+        "selectable": true,
+        "evented": true
       }
     ]
   },
@@ -213,11 +239,12 @@ service cloud.firestore {
 | Shortcut | Action |
 | :--- | :--- |
 | `Ctrl + S` / `Cmd + S` | Save Canvas to Firestore |
-| `Ctrl + Z` / `Cmd + Z` | Undo |
-| `Ctrl + Y` / `Ctrl + Shift + Z` | Redo |
+| `Ctrl + Z` / `Cmd + Z` | Step-by-Step Undo |
+| `Ctrl + Y` / `Ctrl + Shift + Z` / `Cmd + Shift + Z` | Redo |
 | `Delete` / `Backspace` | Delete selected object(s) |
-| `Ctrl + C` / `Ctrl + V` | Copy / Paste selected object |
-| `Ctrl + A` | Select all objects |
+| `Ctrl + C` / `Cmd + C` | Copy selected object |
+| `Ctrl + V` / `Cmd + V` | Paste object (auto-selected) |
+| `Ctrl + A` / `Cmd + A` | Select all unlocked objects |
 | `Ctrl + +` / `Ctrl + -` | Zoom in / Zoom out |
 | `Ctrl + 0` | Reset Zoom to 100% |
 | `V` | Select tool |
@@ -302,11 +329,14 @@ firebase deploy --only hosting
 | Shape Tools | Rect, Circle, Triangle, Line, Star, Arrow, Diamond, Heart, Cloud | ✅ |
 | Freehand Pen & Eraser | PencilBrush, configurable width & color | ✅ |
 | Flood Fill | BFS pixel-flood fill algorithm | ✅ |
-| Object Manipulation | Move, Resize, Rotate, Flip, Layer order, Lock | ✅ |
+| Object Manipulation | Move, Resize, Rotate, Flip, Layer order | ✅ |
+| Persistent Object Locking | Lock survives refresh, reload, Firestore save/load, undo/redo | ✅ |
+| Tool-Mode Selection Priority | Creation tools have pointer priority; old objects never auto-select | ✅ |
+| Auto-Select on Creation | Shapes, text, pen paths, images, pastes immediately become active | ✅ |
 | Text Editing | Click-to-create, click-to-focus, double-click inline edit | ✅ |
 | Persistence | Save button, Firestore sync, localStorage fallback | ✅ |
 | Save Status UX | `✓ Saved`, `● Unsaved`, `Saving...` states | ✅ |
-| Undo / Redo | 50-entry history stack, Ctrl+Z/Y | ✅ |
+| Step-by-Step History | Deduplicated history stack, Ctrl+Z/Y, Cmd+Z/Shift+Z | ✅ |
 | Clear Canvas | Confirmation modal before wipe | ✅ |
 | Export | PNG (2x), SVG, Fabric JSON download | ✅ |
 | Image Upload & Filters | Local image insert, filter presets, adjustments | ✅ |
